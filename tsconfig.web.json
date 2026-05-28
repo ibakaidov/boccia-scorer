@@ -1,0 +1,18 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "composite": true,
+    "target": "ES2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "baseUrl": ".",
+    "types": ["vite/client", "vitest/globals"],
+    "paths": {
+      "@shared/*": ["src/shared/*"],
+      "@renderer/*": ["src/renderer/*"]
+    }
+  },
+  "include": ["src/renderer/**/*.ts", "src/renderer/**/*.vue", "src/shared/**/*.ts", "tests/**/*.ts", "env.d.ts"]
+}

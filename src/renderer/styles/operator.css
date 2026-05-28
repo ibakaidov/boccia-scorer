@@ -1,0 +1,406 @@
+:root {
+  color: #e8eef8;
+  background: #07111f;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 960px;
+  min-height: 100vh;
+  background: #07111f;
+}
+
+button,
+a,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a.primary-action,
+a.secondary-action {
+  border: 0;
+  border-radius: 14px;
+  padding: 14px 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  font-weight: 800;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 4px solid #fbbf24;
+  outline-offset: 3px;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+.side-nav {
+  background: #0b1728;
+  border-right: 1px solid #21324d;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #dc2626 0 48%, #2563eb 52% 100%);
+  font-weight: 900;
+}
+
+.brand small,
+.status-card small,
+.metric-card small {
+  display: block;
+  color: #9fb0c8;
+}
+
+nav {
+  display: grid;
+  gap: 8px;
+}
+
+nav a {
+  color: #cbd7ea;
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+}
+
+nav a.router-link-active,
+nav a:hover {
+  background: #17243a;
+  color: #ffffff;
+}
+
+.status-card,
+.metric-card,
+.settings-panel,
+.warning-panel,
+.panel-form,
+.timer-card,
+.score-card {
+  background: #101d31;
+  border: 1px solid #263956;
+  border-radius: 22px;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.18);
+}
+
+.status-card {
+  margin-top: auto;
+  padding: 16px;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-dot.online {
+  background: #22c55e;
+}
+
+.status-dot.offline {
+  background: #f59e0b;
+}
+
+.main-panel {
+  padding: 34px;
+}
+
+.page {
+  max-width: 1220px;
+  margin: 0 auto;
+}
+
+.narrow-page {
+  max-width: 760px;
+}
+
+.center-page {
+  min-height: calc(100vh - 68px);
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.hero-page {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 36px;
+  align-items: center;
+  min-height: calc(100vh - 68px);
+}
+
+.eyebrow {
+  color: #60a5fa;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 0.95;
+  margin: 0 0 18px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+.lead {
+  color: #b6c4d8;
+  font-size: 20px;
+  line-height: 1.55;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.button-row.center {
+  justify-content: center;
+}
+
+.primary-action {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.secondary-action {
+  background: #25344e;
+  color: #ffffff;
+}
+
+.danger-action {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.dashboard-grid,
+.settings-grid,
+.score-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-card {
+  padding: 22px;
+}
+
+.metric-card strong {
+  display: block;
+  font-size: 44px;
+}
+
+.panel-form,
+.settings-panel,
+.warning-panel {
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: #d8e2f2;
+  font-weight: 700;
+}
+
+input,
+select {
+  border: 1px solid #385071;
+  border-radius: 12px;
+  background: #081323;
+  color: #ffffff;
+  padding: 12px;
+  min-height: 48px;
+}
+
+.error-text {
+  color: #fecaca;
+  background: #7f1d1d;
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.giant-timer {
+  font-size: clamp(88px, 18vw, 220px);
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+  background: #0f1e33;
+  border: 6px solid #2e4870;
+  width: min(780px, 90vw);
+  min-height: 280px;
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.sync-pill {
+  background: #17243a;
+  border-radius: 999px;
+  padding: 10px 14px;
+  color: #bfdbfe;
+}
+
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr 280px 1fr;
+  gap: 18px;
+}
+
+.timer-card {
+  padding: 18px;
+}
+
+.timer-card header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.timer-card.red {
+  border-color: #ef4444;
+}
+
+.timer-card.blue {
+  border-color: #3b82f6;
+}
+
+.timer-card.running {
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.24);
+}
+
+.timer-face {
+  width: 100%;
+  margin: 16px 0;
+  font-size: clamp(64px, 8vw, 130px);
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+  background: #081323;
+}
+
+.central-actions {
+  display: grid;
+  gap: 12px;
+  place-items: center;
+  background: #0e1a2d;
+  border: 1px solid #263956;
+  border-radius: 22px;
+  padding: 18px;
+}
+
+.central-actions strong {
+  font-size: 54px;
+}
+
+.score-row {
+  margin-top: 18px;
+}
+
+.score-card {
+  padding: 22px;
+}
+
+.score-card strong {
+  display: block;
+  font-size: 90px;
+  line-height: 1;
+}
+
+.score-card.red {
+  border-color: #ef4444;
+}
+
+.score-card.blue {
+  border-color: #3b82f6;
+}
+
+.hotkey-strip {
+  margin-top: 18px;
+  color: #aab8cb;
+  background: #0d1829;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #101d31;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.data-table th,
+.data-table td {
+  padding: 14px;
+  border-bottom: 1px solid #263956;
+  text-align: left;
+}
+
+.class-editor {
+  display: grid;
+  grid-template-columns: 180px 1fr 110px 130px;
+  gap: 10px;
+  align-items: center;
+}
+
+@media (max-width: 1050px) {
+  body {
+    min-width: 0;
+  }
+
+  .app-shell,
+  .hero-page,
+  .match-grid,
+  .dashboard-grid,
+  .settings-grid,
+  .score-row {
+    grid-template-columns: 1fr;
+  }
+
+  .side-nav {
+    position: static;
+  }
+}

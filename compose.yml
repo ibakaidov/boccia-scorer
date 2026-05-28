@@ -1,0 +1,71 @@
+name: boccia-scorer-v2
+
+x-app: &app
+  build:
+    context: .
+    target: dev
+  image: boccia-scorer-v2:dev
+  working_dir: /workspace
+  environment:
+    CI: "true"
+    NPM_CONFIG_CACHE: /cache/npm
+    ELECTRON_CACHE: /cache/electron
+    ELECTRON_BUILDER_CACHE: /cache/electron-builder
+    PLAYWRIGHT_BROWSERS_PATH: /cache/ms-playwright
+    HOME: /tmp
+    BOCCIA_ELECTRON_NO_SANDBOX: "1"
+  volumes:
+    - .:/workspace
+    - node_modules:/workspace/node_modules
+    - npm_cache:/cache/npm
+    - electron_cache:/cache/electron
+    - electron_builder_cache:/cache/electron-builder
+    - playwright_cache:/cache/ms-playwright
+    - vite_cache:/workspace/node_modules/.vite
+
+services:
+  app:
+    <<: *app
+    command: npm run dev:docker
+
+  shell:
+    <<: *app
+    command: bash
+    stdin_open: true
+    tty: true
+
+  install:
+    <<: *app
+    command: npm install
+
+  typecheck:
+    <<: *app
+    command: npm run typecheck
+
+  lint:
+    <<: *app
+    command: npm run lint
+
+  test:
+    <<: *app
+    command: npm run test
+
+  build:
+    <<: *app
+    command: npm run build
+
+  package-linux:
+    <<: *app
+    command: npx electron-builder --linux AppImage --arm64
+
+  ci:
+    <<: *app
+    command: bash -lc "npm run typecheck && npm run lint && npm run test && npm run build"
+
+volumes:
+  node_modules:
+  npm_cache:
+  electron_cache:
+  electron_builder_cache:
+  playwright_cache:
+  vite_cache:

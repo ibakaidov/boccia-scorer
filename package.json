@@ -1,0 +1,87 @@
+{
+  "name": "boccia-scorer-v2",
+  "version": "0.1.0",
+  "description": "Offline-first boccia scoring desktop application",
+  "main": "./out/main/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "dev:docker": "electron-vite dev -- --no-sandbox",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.web.json && tsc --noEmit -p tsconfig.node.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts",
+    "build": "npm run typecheck && electron-vite build",
+    "build:electron": "npm run build && electron-builder",
+    "rebuild:native": "electron-builder install-app-deps",
+    "docker:install": "sudo docker compose run --rm install",
+    "docker:typecheck": "sudo docker compose run --rm typecheck",
+    "docker:lint": "sudo docker compose run --rm lint",
+    "docker:test": "sudo docker compose run --rm test",
+    "docker:build": "sudo docker compose run --rm build",
+    "docker:package:linux": "sudo docker compose run --rm package-linux",
+    "docker:ci": "sudo docker compose run --rm ci"
+  },
+  "dependencies": {
+    "@electron-toolkit/preload": "^3.0.1",
+    "@electron-toolkit/utils": "^3.0.0",
+    "better-sqlite3": "^11.9.1",
+    "pinia": "^2.3.1",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "@testing-library/vue": "^8.1.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/node": "^22.10.5",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "@vue/tsconfig": "^0.7.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "electron-vite": "^2.3.0",
+    "eslint": "^9.17.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.19.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "vitest": "^2.1.8",
+    "vue-eslint-parser": "^9.4.3",
+    "vue-tsc": "^2.2.0"
+  },
+  "build": {
+    "appId": "org.boccia.scorer.v2",
+    "productName": "Boccia Scorer v2",
+    "files": [
+      "out/**",
+      "package.json"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ]
+    }
+  }
+}
