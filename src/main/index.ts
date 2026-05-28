@@ -24,7 +24,7 @@ if (!gotLock) {
   void app.whenReady().then(() => {
     const database = new LocalDatabase()
     const syncService = new SyncService(database)
-    const preloadPath = join(__dirname, "../preload/index.js")
+    const preloadPath = join(__dirname, "../preload/index.mjs")
 
     windows = createWindows(preloadPath)
     registerHandlers(database, syncService, () => windows?.operator, () => windows?.scoreboard)
