@@ -111,7 +111,7 @@ export class LocalDatabase {
   enqueue(item: SyncQueueItem): void {
     this.db
       .prepare(
-        "INSERT OR REPLACE INTO sync_queue (id, match_client_id, type, payload, status, attempts, last_error, created_at, updated_at) VALUES (@id, @matchClientId, @type, @payload, @status, @attempts, @lastError, @createdAt, @updatedAt)"
+        "INSERT OR REPLACE INTO sync_queue (id, match_client_id, type, payload, status, attempts, last_error, created_at, updated_at) VALUES (@id, @match_client_id, @type, @payload, @status, @attempts, @last_error, @created_at, @updated_at)"
       )
       .run(toSyncRow(item))
   }
