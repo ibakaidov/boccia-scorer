@@ -35,7 +35,7 @@ onBeforeUnmount(() => {
       <article :class="['board-side', 'red', { active: state.activeTimer === 'red' }]">
         <span>{{ state.red.label }}</span>
         <strong>{{ state.red.timer.label }}</strong>
-        <div class="board-score">{{ state.red.totalScore }}</div>
+        <div class="board-score">{{ state.red.endScore }}</div>
       </article>
 
       <article class="board-center">
@@ -46,7 +46,7 @@ onBeforeUnmount(() => {
       <article :class="['board-side', 'blue', { active: state.activeTimer === 'blue' }]">
         <span>{{ state.blue.label }}</span>
         <strong>{{ state.blue.timer.label }}</strong>
-        <div class="board-score">{{ state.blue.totalScore }}</div>
+        <div class="board-score">{{ state.blue.endScore }}</div>
       </article>
     </section>
 
