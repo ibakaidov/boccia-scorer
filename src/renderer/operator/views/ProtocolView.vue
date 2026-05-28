@@ -6,12 +6,30 @@ const store = useScorerStore()
 const firstSide = ref<"red" | "blue">("red")
 const error = ref("")
 const totals = computed(() => store.mainTotals())
+const activeTieBreak = computed(() => store.match?.tieBreaks.at(-1))
+const canStartTieBreak = computed(() => store.match?.phase === "protocol" && store.needsTieBreak())
+const canCompleteTieBreak = computed(
+  () =>
+    store.match?.phase === "tieBreak" &&
+    activeTieBreak.value?.status === "inProgress" &&
+    activeTieBreak.value.redScore !== activeTieBreak.value.blueScore
+)
+const canFinishMatch = computed(() => store.match?.phase === "protocol" && !store.needsTieBreak())
 
 async function finish() {
   error.value = ""
   if (!confirm("Завершить матч? В автономном режиме код не требуется.")) return
   try {
     await store.finishMatch()
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : String(err)
+  }
+}
+
+async function completeTieBreak() {
+  error.value = ""
+  try {
+    await store.completeTieBreak()
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err)
   }
@@ -44,7 +62,7 @@ async function finish() {
       </tbody>
     </table>
 
-    <section v-if="store.needsTieBreak()" class="warning-panel">
+    <section v-if="canStartTieBreak" class="warning-panel">
       <strong>Нужен тай-брейк</strong>
       <span>После основных эндов счет равный.</span>
       <select v-model="firstSide">
@@ -62,11 +80,13 @@ async function finish() {
         <button type="button" @click="store.changeScore('blue', -1)">Синие -</button>
         <button type="button" @click="store.changeScore('blue', 1)">Синие +</button>
       </div>
-      <button type="button" class="danger-action" @click="store.completeTieBreak">Завершить тай-брейк</button>
+      <button type="button" class="danger-action" :disabled="!canCompleteTieBreak" @click="completeTieBreak">
+        Завершить тай-брейк
+      </button>
     </section>
 
     <p v-if="error" class="error-text">{{ error }}</p>
-    <button type="button" class="primary-action" :disabled="store.needsTieBreak()" @click="finish">
+    <button type="button" class="primary-action" :disabled="!canFinishMatch" @click="finish">
       Завершить матч без кода
     </button>
   </section>

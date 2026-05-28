@@ -206,7 +206,7 @@ export const useScorerStore = defineStore("scorer", {
       await this.refreshScoreboard()
     },
     async startTieBreak(firstSide: SideColor) {
-      if (!this.match || !matchNeedsTieBreak(this.match)) return
+      if (!this.match || this.match.phase !== "protocol" || !matchNeedsTieBreak(this.match)) return
       this.match = createTieBreak(this.match, firstSide)
       if (this.timers && this.activeGameClass) {
         this.timers.redEnd = resetTimer({ ...this.timers.redEnd, maxSec: this.activeGameClass.endTimeSec })
@@ -218,6 +218,9 @@ export const useScorerStore = defineStore("scorer", {
     },
     async completeTieBreak() {
       if (!this.match) return
+      const current = this.match.tieBreaks.at(-1)
+      if (this.match.phase !== "tieBreak" || current?.status !== "inProgress") return
+      if (current.redScore === current.blueScore) throw new Error("Тай-брейк нельзя завершить вничью")
       await this.pauseTimers()
       this.match = completeDomainTieBreak(this.match)
       await this.recordAction("tiebreak.complete", { tieBreak: this.match.tieBreaks.at(-1) })
