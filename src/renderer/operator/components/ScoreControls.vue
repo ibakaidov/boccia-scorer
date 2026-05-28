@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import type { SideColor } from "@shared/domain"
 
-defineProps<{
+const props = defineProps<{
   color: SideColor
   label: string
   score: number
   total: number
+  disabled?: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   change: [delta: number]
 }>()
+
+function emitChange(delta: number) {
+  if (props.disabled) return
+  emit("change", delta)
+}
 </script>
 
 <template>
@@ -19,8 +25,8 @@ defineEmits<{
     <strong>{{ score }}</strong>
     <small>Итого: {{ total }}</small>
     <div class="button-row">
-      <button type="button" @click="$emit('change', -1)">-</button>
-      <button type="button" @click="$emit('change', 1)">+</button>
+      <button type="button" :disabled="disabled" @click="emitChange(-1)">-</button>
+      <button type="button" :disabled="disabled" @click="emitChange(1)">+</button>
     </div>
   </section>
 </template>

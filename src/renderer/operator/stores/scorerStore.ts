@@ -171,10 +171,12 @@ export const useScorerStore = defineStore("scorer", {
       if (!this.match) return
       if (this.match.phase === "tieBreak") {
         const current = this.match.tieBreaks.at(-1)
+        if (current?.status !== "inProgress") return
         const value = color === "red" ? (current?.redScore ?? 0) + delta : (current?.blueScore ?? 0) + delta
         this.match = setTieBreakScore(this.match, color, value)
       } else {
         const current = this.match.ends[this.match.activeEndIndex]
+        if (this.match.phase !== "end" || current?.status !== "inProgress") return
         const value = color === "red" ? (current?.redScore ?? 0) + delta : (current?.blueScore ?? 0) + delta
         this.match = setEndScore(this.match, color, value)
       }
@@ -184,6 +186,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async completeEnd() {
       if (!this.match) return
+      if (this.match.phase !== "end" || this.activeEnd?.status !== "inProgress") return
       await this.pauseTimers()
       this.match = completeCurrentEnd(this.match)
       const end = this.match.ends[this.match.activeEndIndex]

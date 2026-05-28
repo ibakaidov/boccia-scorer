@@ -65,4 +65,22 @@ describe("scorerStore", () => {
     expect(store.actionLog[0]).toMatchObject({ type: "match.create" })
     expect(store.actionLog[0]?.matchClientId).toBe(store.match?.clientId)
   })
+
+  it("does not submit or change a completed end again", async () => {
+    const store = useScorerStore()
+
+    await store.startStandaloneMatch("bc1f")
+    await store.startEnds()
+    await store.changeScore("red", 1)
+    await store.completeEnd()
+    const syncQueueLength = store.syncQueue.length
+    const actionLogLength = store.actionLog.length
+
+    await store.completeEnd()
+    await store.changeScore("blue", 1)
+
+    expect(store.syncQueue).toHaveLength(syncQueueLength)
+    expect(store.actionLog).toHaveLength(actionLogLength)
+    expect(store.activeEnd).toMatchObject({ redScore: 1, blueScore: 0, status: "completed" })
+  })
 })
