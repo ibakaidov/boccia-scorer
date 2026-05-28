@@ -26,11 +26,18 @@ onBeforeUnmount(() => {
 
 function handleKeydown(event: KeyboardEvent) {
   const target = event.target as HTMLElement | null
-  if (target?.tagName === "INPUT" || target?.tagName === "SELECT" || target?.tagName === "TEXTAREA") return
+  if (target?.tagName === "INPUT" || target?.tagName === "SELECT" || target?.tagName === "TEXTAREA" || target?.isContentEditable) return
 
-  if (event.code === store.settings.hotkeys.redTimer) void store.toggleSideTimer("red")
-  if (event.code === store.settings.hotkeys.blueTimer) void store.toggleSideTimer("blue")
-  if (event.code === store.settings.hotkeys.pause) void store.pauseTimers()
+  if (event.code === store.settings.hotkeys.redTimer) {
+    event.preventDefault()
+    void store.toggleSideTimer("red")
+  } else if (event.code === store.settings.hotkeys.blueTimer) {
+    event.preventDefault()
+    void store.toggleSideTimer("blue")
+  } else if (event.code === store.settings.hotkeys.pause) {
+    event.preventDefault()
+    void store.pauseTimers()
+  }
 }
 
 async function completeEnd() {
