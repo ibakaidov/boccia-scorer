@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { createIdleScoreboard } from "@shared/domain"
 import type { ScoreboardState } from "@shared/domain"
 
 const state = ref<ScoreboardState>(createIdleScoreboard())
+const centerEndLabel = computed(() => (state.value.mode === "idle" ? "-" : state.value.currentEndLabel))
 let unsubscribe: (() => void) | undefined
 
 onMounted(() => {
@@ -35,20 +36,17 @@ onBeforeUnmount(() => {
         <span>{{ state.red.label }}</span>
         <strong>{{ state.red.timer.label }}</strong>
         <div class="board-score">{{ state.red.totalScore }}</div>
-        <small>Энд: {{ state.red.endScore }}</small>
       </article>
 
       <article class="board-center">
-        <span>{{ state.statusLabel }}</span>
-        <strong>{{ state.red.totalScore }} : {{ state.blue.totalScore }}</strong>
-        <small>{{ state.syncLabel }}</small>
+        <span>Энд</span>
+        <strong>{{ centerEndLabel }}</strong>
       </article>
 
       <article :class="['board-side', 'blue', { active: state.activeTimer === 'blue' }]">
         <span>{{ state.blue.label }}</span>
         <strong>{{ state.blue.timer.label }}</strong>
         <div class="board-score">{{ state.blue.totalScore }}</div>
-        <small>Энд: {{ state.blue.endScore }}</small>
       </article>
     </section>
 

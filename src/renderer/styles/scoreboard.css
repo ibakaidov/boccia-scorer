@@ -19,8 +19,8 @@ body {
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  gap: 2.4vh;
-  padding: 3vh;
+  gap: 1.8vh;
+  padding: 2vh;
   background:
     radial-gradient(circle at 15% 20%, rgba(220, 38, 38, 0.28), transparent 35%),
     radial-gradient(circle at 85% 80%, rgba(37, 99, 235, 0.28), transparent 35%), #050b14;
@@ -43,9 +43,10 @@ body {
 
 .side-board-grid {
   display: grid;
-  grid-template-columns: 1fr 0.44fr 1fr;
-  gap: 2vw;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.54fr) minmax(0, 1fr);
+  gap: 1.4vw;
   align-items: stretch;
+  min-width: 0;
 }
 
 .board-side,
@@ -57,7 +58,8 @@ body {
   display: grid;
   place-items: center;
   text-align: center;
-  padding: 2vw;
+  padding: clamp(12px, 1.4vw, 28px);
+  min-width: 0;
 }
 
 .board-side.red {
@@ -84,10 +86,11 @@ body {
 
 .board-side strong,
 .solo-board strong {
-  font-size: clamp(88px, 15vw, 230px);
+  font-size: clamp(72px, 10vw, 190px);
   line-height: 0.9;
   font-weight: 950;
   font-variant-numeric: tabular-nums;
+  max-width: 100%;
 }
 
 .board-score {
@@ -97,8 +100,10 @@ body {
 }
 
 .board-center strong {
-  font-size: clamp(52px, 8vw, 130px);
+  font-size: clamp(38px, 4.4vw, 76px);
   font-variant-numeric: tabular-nums;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .board-side small,
