@@ -114,6 +114,7 @@ export const useScorerStore = defineStore("scorer", {
     async startStandaloneMatch(gameClassId: string, courtId?: string) {
       const gameClass = this.settings.gameClasses.find((item) => item.id === gameClassId)
       if (!gameClass) throw new Error("Класс не найден")
+      this.actionLog = []
       this.match = createStandaloneMatch(gameClass, courtId || undefined)
       this.timers = createMatchTimers(gameClass.endTimeSec, this.settings.timers)
       await this.recordAction("match.create", { gameClassId, courtId })

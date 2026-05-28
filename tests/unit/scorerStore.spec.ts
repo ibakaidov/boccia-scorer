@@ -53,4 +53,16 @@ describe("scorerStore", () => {
     expect(window.bocciaApi.scoreboard.update).toHaveBeenCalledOnce()
     expect(window.bocciaApi.sync.enqueue).toHaveBeenCalledOnce()
   })
+
+  it("clears previous action log entries when starting a new match", async () => {
+    const store = useScorerStore()
+
+    await store.startStandaloneMatch("bc1f")
+    await store.recordAction("score.change", { color: "red", delta: 1 })
+    await store.startStandaloneMatch("bc1f")
+
+    expect(store.actionLog).toHaveLength(1)
+    expect(store.actionLog[0]).toMatchObject({ type: "match.create" })
+    expect(store.actionLog[0]?.matchClientId).toBe(store.match?.clientId)
+  })
 })
