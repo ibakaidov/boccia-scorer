@@ -52,6 +52,10 @@ type State = {
   lastSnapshotAt: number
 }
 
+function toPlain<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
 export const useScorerStore = defineStore("scorer", {
   state: (): State => ({
     loaded: false,
@@ -220,7 +224,7 @@ export const useScorerStore = defineStore("scorer", {
       if (!this.match) return
       if (matchNeedsTieBreak(this.match)) throw new Error("Нужен тай-брейк перед завершением")
       this.match = completeDomainMatch(this.match)
-      await window.bocciaApi.match.complete(this.match)
+      await window.bocciaApi.match.complete(toPlain(this.match))
       await this.enqueue("finishMatch", {
         clientEventId: createId("event"),
         match: this.match,
@@ -242,7 +246,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async refreshScoreboard() {
       this.scoreboard = buildScoreboardState(this.match, this.timers, this.settings, this.syncLabel)
-      await window.bocciaApi.scoreboard.update(this.scoreboard)
+      await window.bocciaApi.scoreboard.update(toPlain(this.scoreboard))
     },
     canFinishMainEnds(): boolean {
       return Boolean(this.match && allMainEndsCompleted(this.match))
@@ -268,12 +272,12 @@ export const useScorerStore = defineStore("scorer", {
       const now = Date.now()
       if (!force && now - this.lastSnapshotAt < 5000) return
       this.lastSnapshotAt = now
-      await window.bocciaApi.match.saveSnapshot({
+      await window.bocciaApi.match.saveSnapshot(toPlain({
         match: this.match,
         timers: this.timers,
         scoreboard: this.scoreboard,
         savedAt: nowIso()
-      })
+      }))
     },
     async recordAction(type: string, payload: unknown) {
       const entry: ActionLogEntry = {
@@ -285,7 +289,7 @@ export const useScorerStore = defineStore("scorer", {
         payload: payload ?? null
       }
       this.actionLog.push(entry)
-      await window.bocciaApi.actionLog.add(entry)
+      await window.bocciaApi.actionLog.add(toPlain(entry))
     },
     async enqueue(type: SyncQueueItem["type"], payload: unknown) {
       if (!this.match) return
@@ -300,7 +304,7 @@ export const useScorerStore = defineStore("scorer", {
         updatedAt: nowIso()
       }
       this.syncQueue.push(item)
-      await window.bocciaApi.sync.enqueue(item)
+      await window.bocciaApi.sync.enqueue(toPlain(item))
     }
   }
 })
