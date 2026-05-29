@@ -126,7 +126,7 @@ async function continueTieBreak() {
           <span class="phase-label">Тай-брейк {{ store.match.tieBreaks.length }}</span>
           <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
           <span>Основной счет</span>
-          <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
+          <button type="button" class="secondary-action" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
           <div class="tie-break-actions">
             <button type="button" class="danger-action" @click="finishTieBreak('red')">Победа красных</button>
             <button type="button" class="primary-action" @click="finishTieBreak('blue')">Победа синих</button>
@@ -143,7 +143,7 @@ async function continueTieBreak() {
         <template v-else>
           <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
           <span>Общий счет</span>
-          <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
+          <button type="button" class="secondary-action" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
           <button type="button" class="danger-action" :disabled="!canCompleteEnd" @click="completeEnd">Перейти к сбору мячей</button>
         </template>
       </div>

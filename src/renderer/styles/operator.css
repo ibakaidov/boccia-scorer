@@ -197,17 +197,20 @@ h2 {
   justify-content: center;
 }
 
-.primary-action {
+button.primary-action,
+a.primary-action {
   background: #2563eb;
   color: #ffffff;
 }
 
-.secondary-action {
+button.secondary-action,
+a.secondary-action {
   background: #25344e;
   color: #ffffff;
 }
 
-.danger-action {
+button.danger-action,
+a.danger-action {
   background: #dc2626;
   color: #ffffff;
 }
