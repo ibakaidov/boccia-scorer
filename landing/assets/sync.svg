@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Синхронизация</title>
+  <path d="M48 23a18 18 0 0 0-30-7l-4 4" fill="none" stroke="#4aa3ff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M14 41a18 18 0 0 0 30 7l4-4" fill="none" stroke="#ff4d5a" stroke-width="5" stroke-linecap="round"/>
+  <path d="M14 20h12M14 20V8M50 44H38M50 44v12" fill="none" stroke="#ffd166" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

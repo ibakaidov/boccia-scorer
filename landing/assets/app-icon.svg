@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Boccia Scorer icon</title>
+  <desc id="desc">Scoreboard with red, blue and white boccia balls.</desc>
+  <rect width="128" height="128" rx="28" fill="#07111f"/>
+  <rect x="16" y="22" width="96" height="60" rx="14" fill="#132a45" stroke="#d7e8ff" stroke-opacity=".16"/>
+  <rect x="28" y="42" width="31" height="24" rx="8" fill="#ff4d5a"/>
+  <rect x="69" y="42" width="31" height="24" rx="8" fill="#4aa3ff"/>
+  <text x="43.5" y="60" text-anchor="middle" fill="#fff" font-size="18" font-family="Arial, sans-serif" font-weight="800">04</text>
+  <text x="84.5" y="60" text-anchor="middle" fill="#fff" font-size="18" font-family="Arial, sans-serif" font-weight="800">03</text>
+  <circle cx="44" cy="96" r="12" fill="#ff4d5a"/>
+  <circle cx="84" cy="96" r="12" fill="#4aa3ff"/>
+  <circle cx="64" cy="101" r="8" fill="#f7fbff"/>
+</svg>

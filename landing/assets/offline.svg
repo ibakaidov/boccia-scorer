@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Offline-first</title>
+  <path d="M14 28a18 18 0 0 1 29-11" fill="none" stroke="#4aa3ff" stroke-width="5" stroke-linecap="round"/>
+  <path d="M50 28a18 18 0 0 0-29-11" fill="none" stroke="#ff4d5a" stroke-width="5" stroke-linecap="round"/>
+  <rect x="14" y="30" width="36" height="24" rx="8" fill="#132a45" stroke="#d7e8ff" stroke-opacity=".22"/>
+  <path d="M24 42h16" stroke="#ffd166" stroke-width="5" stroke-linecap="round"/>
+</svg>

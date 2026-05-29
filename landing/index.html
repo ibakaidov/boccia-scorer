@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Boccia Scorer v2</title>
+    <meta
+      name="description"
+      content="Boccia Scorer v2 - десктопный счетчик для матчей по бочча с окном оператора, табло, таймерами и offline-режимом."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <div class="hero__copy">
+          <p class="eyebrow">Desktop scorer для соревнований по бочча</p>
+          <h1>Boccia Scorer v2</h1>
+          <p class="lead">
+            Счетчик для корта: оператор ведет матч, второе окно показывает крупное табло,
+            а результаты сохраняются локально даже без сети.
+          </p>
+          <div class="actions">
+            <a class="button" href="https://github.com/ibakaidov/boccia-scorer/releases/latest">Скачать релиз</a>
+            <a class="button button--ghost" href="https://github.com/ibakaidov/boccia-scorer">GitHub</a>
+          </div>
+        </div>
+        <div class="hero__card" aria-label="Пример табло Boccia Scorer">
+          <img src="assets/app-icon.svg" alt="" width="120" height="120" />
+          <div class="scoreline">
+            <span class="side side--red">Красные 04</span>
+            <span class="end">Энд 3</span>
+            <span class="side side--blue">Синие 03</span>
+          </div>
+          <div class="timer">02:14</div>
+        </div>
+      </section>
+
+      <section class="features" aria-labelledby="features-title">
+        <h2 id="features-title">Что делает счетчик</h2>
+        <div class="feature-grid">
+          <article class="feature">
+            <img src="assets/scoreboard.svg" alt="" width="48" height="48" />
+            <h3>Два окна</h3>
+            <p>Оператор управляет матчем, табло остается read-only для судей, зрителей и спортсменов.</p>
+          </article>
+          <article class="feature">
+            <img src="assets/timer.svg" alt="" width="48" height="48" />
+            <h3>Таймеры сторон</h3>
+            <p>Отдельное время красной и синей стороны, разминка, сбор мячей и быстрые действия.</p>
+          </article>
+          <article class="feature">
+            <img src="assets/offline.svg" alt="" width="48" height="48" />
+            <h3>Offline-first</h3>
+            <p>Матч можно начать по классу и вести без сервера, игроков, этапа и кода завершения.</p>
+          </article>
+          <article class="feature">
+            <img src="assets/history.svg" alt="" width="48" height="48" />
+            <h3>История SQLite</h3>
+            <p>Завершенные матчи сохраняются локально и остаются доступны после перезапуска.</p>
+          </article>
+          <article class="feature">
+            <img src="assets/sync.svg" alt="" width="48" height="48" />
+            <h3>Очередь синхронизации</h3>
+            <p>Если сеть вернется позже, результаты можно отправить на сервер из очереди.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="download" aria-labelledby="download-title">
+        <h2 id="download-title">Релизы</h2>
+        <p>
+          macOS сборка подписывается Developer ID. Windows сборка пока без подписи, поэтому SmartScreen может показать предупреждение.
+          Linux доступен как AppImage.
+        </p>
+        <a class="button" href="https://github.com/ibakaidov/boccia-scorer/releases/latest">Открыть последний релиз</a>
+      </section>
+    </main>
+  </body>
+</html>

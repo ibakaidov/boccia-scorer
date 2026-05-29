@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">История матчей</title>
+  <rect x="12" y="10" width="40" height="46" rx="8" fill="#132a45" stroke="#d7e8ff" stroke-opacity=".22"/>
+  <path d="M22 22h20M22 32h20M22 42h12" stroke="#d7e8ff" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="44" cy="43" r="8" fill="#ffd166"/>
+  <path d="M41 43l2 2 5-6" fill="none" stroke="#07111f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
