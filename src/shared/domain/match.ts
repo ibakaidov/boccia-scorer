@@ -151,6 +151,35 @@ export function completeTieBreak(match: Match, winner: SideColor): Match {
   return touch({ ...match, tieBreaks, phase: "protocol" })
 }
 
+export function continueTieBreak(match: Match, firstSide: SideColor): Match {
+  const activeTieBreak = match.tieBreaks.at(-1)
+  if (!activeTieBreak) {
+    throw new Error("Тай-брейк не найден")
+  }
+
+  const completedAt = nowIso()
+  const tieBreaks = match.tieBreaks.map((tieBreak, index) => {
+    if (index !== match.tieBreaks.length - 1) return tieBreak
+    return {
+      ...tieBreak,
+      status: "completed" as const,
+      completedAt
+    }
+  })
+  const nextTieBreak: TieBreakEnd = {
+    index: tieBreaks.length + 1,
+    firstSide,
+    redScore: 0,
+    blueScore: 0,
+    redTimeUsedSec: 0,
+    blueTimeUsedSec: 0,
+    status: "inProgress",
+    startedAt: nowIso()
+  }
+
+  return touch({ ...match, phase: "tieBreak", tieBreaks: [...tieBreaks, nextTieBreak] })
+}
+
 export function completeMatch(match: Match): Match {
   const completedAt = nowIso()
   return touch({ ...match, status: "completed", phase: "completed", completedAt })

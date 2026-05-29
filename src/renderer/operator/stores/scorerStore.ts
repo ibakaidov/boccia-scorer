@@ -10,6 +10,7 @@ import {
   completeCurrentEnd,
   completeMatch as completeDomainMatch,
   completeTieBreak as completeDomainTieBreak,
+  continueTieBreak as continueDomainTieBreak,
   createId,
   createMatchTimers,
   createStandaloneMatch,
@@ -266,6 +267,20 @@ export const useScorerStore = defineStore("scorer", {
       await this.pauseTimers()
       this.match = completeDomainTieBreak(this.match, winner)
       await this.recordAction("tiebreak.complete", { tieBreak: this.match.tieBreaks.at(-1) })
+      await this.persistSnapshot(true)
+      await this.refreshScoreboard()
+    },
+    async continueTieBreak(firstSide: SideColor) {
+      if (!this.match) return
+      const current = this.match.tieBreaks.at(-1)
+      if (this.match.phase !== "tieBreak" || current?.status !== "inProgress") return
+      await this.pauseTimers()
+      this.match = continueDomainTieBreak(this.match, firstSide)
+      if (this.timers && this.activeGameClass) {
+        this.timers.redEnd = resetTimer({ ...this.timers.redEnd, maxSec: this.activeGameClass.endTimeSec })
+        this.timers.blueEnd = resetTimer({ ...this.timers.blueEnd, maxSec: this.activeGameClass.endTimeSec })
+      }
+      await this.recordAction("tiebreak.continue", { tieBreak: this.match.tieBreaks.at(-1) })
       await this.persistSnapshot(true)
       await this.refreshScoreboard()
     },

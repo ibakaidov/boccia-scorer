@@ -346,6 +346,17 @@ select {
   font-variant-numeric: tabular-nums;
 }
 
+.tie-break-actions {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+}
+
+.compact-field {
+  width: 100%;
+  font-size: 14px;
+}
+
 .score-row {
   margin-top: 18px;
 }

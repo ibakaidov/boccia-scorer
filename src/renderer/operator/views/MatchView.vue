@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { formatTimer } from "@shared/domain"
+import type { SideColor } from "@shared/domain"
 import TimerCard from "../components/TimerCard.vue"
 import ScoreControls from "../components/ScoreControls.vue"
 import { useScorerStore } from "../stores/scorerStore"
 
 const store = useScorerStore()
 const router = useRouter()
+const nextTieBreakFirstSide = ref<SideColor>("red")
 let interval: number | undefined
 
 const activeEnd = computed(() => store.activeEnd)
@@ -71,6 +73,20 @@ async function completeEnd() {
 async function nextEnd() {
   await store.nextEnd()
 }
+
+async function finishTieBreak(winner: SideColor) {
+  const label = winner === "red" ? "победа красных" : "победа синих"
+  if (!confirm(`Завершить тай-брейк: ${label}?`)) return
+  await store.completeTieBreak(winner)
+  if (store.match?.phase === "protocol") {
+    await router.push("/protocol")
+  }
+}
+
+async function continueTieBreak() {
+  if (!confirm("Положение равноудалено? Начать дополнительный тай-брейк?")) return
+  await store.continueTieBreak(nextTieBreakFirstSide.value)
+}
 </script>
 
 <template>
@@ -100,6 +116,24 @@ async function nextEnd() {
             {{ store.timers.collectBalls.running ? "Остановить часы" : "Продолжить сбор" }}
           </button>
           <button type="button" class="primary-action" @click="nextEnd">Начать следующий энд</button>
+        </template>
+        <template v-else-if="store.match.phase === 'tieBreak'">
+          <span class="phase-label">Тай-брейк {{ store.match.tieBreaks.length }}</span>
+          <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
+          <span>Основной счет</span>
+          <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
+          <div class="tie-break-actions">
+            <button type="button" class="danger-action" @click="finishTieBreak('red')">Победа красных</button>
+            <button type="button" class="primary-action" @click="finishTieBreak('blue')">Победа синих</button>
+          </div>
+          <label class="compact-field">
+            Первый мяч следующего тай-брейка
+            <select v-model="nextTieBreakFirstSide">
+              <option value="red">Красные</option>
+              <option value="blue">Синие</option>
+            </select>
+          </label>
+          <button type="button" class="secondary-action" @click="continueTieBreak">Равноудалено</button>
         </template>
         <template v-else>
           <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
