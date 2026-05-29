@@ -22,14 +22,13 @@ export class LocalDatabase {
     const row = this.db.prepare("SELECT payload FROM settings WHERE key = ?").get("app") as
       | DbRow
       | undefined
-    if (!row) return DEFAULT_SETTINGS
+    if (!row) return normalizeSettings(DEFAULT_SETTINGS)
 
-    const parsed = settingsSchema.safeParse(JSON.parse(row.payload))
-    return parsed.success ? parsed.data : DEFAULT_SETTINGS
+    return normalizeSettings(JSON.parse(row.payload))
   }
 
   saveSettings(settings: AppSettings): AppSettings {
-    const validated = settingsSchema.parse(settings)
+    const validated = settingsSchema.parse(normalizeSettings(settings))
     this.db
       .prepare(
         "INSERT INTO settings (key, payload, updated_at) VALUES (@key, @payload, @updatedAt) ON CONFLICT(key) DO UPDATE SET payload = excluded.payload, updated_at = excluded.updated_at"
@@ -221,5 +220,21 @@ function fromSyncRow(row: SyncRow): SyncQueueItem {
     ...(row.last_error ? { lastError: row.last_error } : {}),
     createdAt: row.created_at,
     updatedAt: row.updated_at
+  }
+}
+
+function normalizeSettings(value: unknown): AppSettings {
+  const parsed = settingsSchema.safeParse(value)
+  if (!parsed.success) return DEFAULT_SETTINGS
+
+  const courtsById = new Map(parsed.data.courts.map((court) => [court.id, court]))
+  const courts = [...parsed.data.courts]
+  for (const court of DEFAULT_SETTINGS.courts) {
+    if (!courtsById.has(court.id)) courts.push(court)
+  }
+
+  return {
+    ...parsed.data,
+    courts: courts.sort((a, b) => a.sortOrder - b.sortOrder)
   }
 }

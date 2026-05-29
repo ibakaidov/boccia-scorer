@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { LocalDatabase } from "../../src/main/storage/database"
+import { DEFAULT_SETTINGS } from "@shared/domain"
 import type { SyncQueueItem } from "@shared/domain"
 
 const preparedSql: string[] = []
+let storedSettingsPayload: string | undefined
 
 vi.mock("electron", () => ({
   app: {
@@ -17,11 +19,17 @@ vi.mock("better-sqlite3", () => ({
     prepare(sql: string) {
       preparedSql.push(sql)
       return {
-        get: () => undefined,
+        get: () => {
+          if (sql.includes("FROM settings")) return storedSettingsPayload ? { payload: storedSettingsPayload } : undefined
+          return undefined
+        },
         run: (params: Record<string, unknown>) => {
           for (const parameter of sql.matchAll(/@(\w+)/g)) {
             const key = parameter[1]
             if (key && !(key in params)) throw new Error(`Missing named parameter "${key}"`)
+          }
+          if (sql.includes("INTO settings") && typeof params.payload === "string") {
+            storedSettingsPayload = params.payload
           }
         },
         all: () => []
@@ -32,6 +40,7 @@ vi.mock("better-sqlite3", () => ({
 
 beforeEach(() => {
   preparedSql.length = 0
+  storedSettingsPayload = undefined
 })
 
 describe("LocalDatabase", () => {
@@ -52,5 +61,19 @@ describe("LocalDatabase", () => {
     expect(preparedSql).toContain(
       "INSERT OR REPLACE INTO sync_queue (id, match_client_id, type, payload, status, attempts, last_error, created_at, updated_at) VALUES (@id, @match_client_id, @type, @payload, @status, @attempts, @last_error, @created_at, @updated_at)"
     )
+  })
+
+  it("adds missing default courts to saved settings", () => {
+    const twoCourtSettings = {
+      ...DEFAULT_SETTINGS,
+      courts: DEFAULT_SETTINGS.courts.slice(0, 2)
+    }
+    storedSettingsPayload = JSON.stringify(twoCourtSettings)
+
+    const database = new LocalDatabase("/tmp/boccia-test.sqlite")
+    const settings = database.loadSettings()
+
+    expect(settings.courts).toHaveLength(8)
+    expect(settings.courts.at(-1)).toMatchObject({ id: "court-8", name: "Корт 8" })
   })
 })

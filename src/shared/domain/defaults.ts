@@ -155,7 +155,13 @@ export const DEFAULT_GAME_CLASSES: GameClass[] = [
 
 export const DEFAULT_COURTS: Court[] = [
   { id: "court-1", name: "Корт 1", active: true, sortOrder: 10 },
-  { id: "court-2", name: "Корт 2", active: true, sortOrder: 20 }
+  { id: "court-2", name: "Корт 2", active: true, sortOrder: 20 },
+  { id: "court-3", name: "Корт 3", active: true, sortOrder: 30 },
+  { id: "court-4", name: "Корт 4", active: true, sortOrder: 40 },
+  { id: "court-5", name: "Корт 5", active: true, sortOrder: 50 },
+  { id: "court-6", name: "Корт 6", active: true, sortOrder: 60 },
+  { id: "court-7", name: "Корт 7", active: true, sortOrder: 70 },
+  { id: "court-8", name: "Корт 8", active: true, sortOrder: 80 }
 ]
 
 export const DEFAULT_SETTINGS: AppSettings = {

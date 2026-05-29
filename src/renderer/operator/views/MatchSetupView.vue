@@ -11,6 +11,7 @@ const selectedCourtId = ref("")
 const error = ref("")
 
 const classes = computed(() => store.settings.gameClasses.filter((item) => item.active).sort((a, b) => a.sortOrder - b.sortOrder))
+const courts = computed(() => store.settings.courts.filter((item) => item.active).sort((a, b) => a.sortOrder - b.sortOrder))
 const currentMatchLabel = computed(() => {
   if (!store.match) return ""
   const gameClass = store.settings.gameClasses.find((item) => item.id === store.match?.gameClassId)
@@ -69,7 +70,7 @@ async function start() {
         Корт, необязательно
         <select v-model="selectedCourtId">
           <option value="">Без корта</option>
-          <option v-for="court in store.settings.courts" :key="court.id" :value="court.id">
+          <option v-for="court in courts" :key="court.id" :value="court.id">
             {{ court.name }}
           </option>
         </select>
