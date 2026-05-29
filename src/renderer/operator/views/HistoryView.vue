@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted } from "vue"
 import { useScorerStore } from "../stores/scorerStore"
-import { calculateMatchTotals } from "@shared/domain"
+import { formatMatchResult } from "@shared/domain"
 
 const store = useScorerStore()
 
@@ -27,7 +27,7 @@ onMounted(() => {
         <tr v-for="match in store.history" :key="match.clientId">
           <td>{{ match.completedAt }}</td>
           <td>{{ store.settings.gameClasses.find((item) => item.id === match.gameClassId)?.code }}</td>
-          <td>{{ calculateMatchTotals(match).red }} : {{ calculateMatchTotals(match).blue }}</td>
+          <td>{{ formatMatchResult(match) }}</td>
           <td>{{ match.clientId }}</td>
         </tr>
       </tbody>

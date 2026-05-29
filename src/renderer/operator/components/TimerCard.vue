@@ -6,6 +6,7 @@ defineProps<{
   title: string
   timer: TimerState
   tone?: "red" | "blue" | "neutral"
+  disabled?: boolean
 }>()
 
 defineEmits<{
@@ -19,7 +20,7 @@ defineEmits<{
       <span>{{ title }}</span>
       <strong>{{ timer.running ? "Идет" : "Пауза" }}</strong>
     </header>
-    <button class="timer-face" type="button" @click="$emit('toggle')">
+    <button class="timer-face" type="button" :disabled="disabled" @click="$emit('toggle')">
       {{ formatTimer(timer.maxSec - timer.elapsedSec) }}
     </button>
     <small>Использовано: {{ formatTimer(timer.elapsedSec) }}</small>

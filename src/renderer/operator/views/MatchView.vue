@@ -13,6 +13,7 @@ const activeEnd = computed(() => store.activeEnd)
 const mainTotals = computed(() => store.mainTotals())
 const canEditEnd = computed(() => store.match?.phase === "end" && activeEnd.value?.status === "inProgress")
 const canCompleteEnd = computed(() => canEditEnd.value)
+const canRunSideTimers = computed(() => store.match?.phase === "end" || store.match?.phase === "tieBreak")
 
 onMounted(() => {
   interval = window.setInterval(() => void store.tick(), 1000)
@@ -27,6 +28,8 @@ onBeforeUnmount(() => {
 function handleKeydown(event: KeyboardEvent) {
   const target = event.target as HTMLElement | null
   if (target?.tagName === "INPUT" || target?.tagName === "SELECT" || target?.tagName === "TEXTAREA" || target?.isContentEditable) return
+
+  if (!canRunSideTimers.value) return
 
   if (event.code === store.settings.hotkeys.redTimer) {
     event.preventDefault()
@@ -64,7 +67,13 @@ async function nextEnd() {
     </header>
 
     <div class="match-grid">
-      <TimerCard title="Красные" :timer="store.timers.redEnd" tone="red" @toggle="store.toggleSideTimer('red')" />
+      <TimerCard
+        title="Красные"
+        :timer="store.timers.redEnd"
+        tone="red"
+        :disabled="!canRunSideTimers"
+        @toggle="store.toggleSideTimer('red')"
+      />
       <div class="central-actions">
         <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
         <span>Общий счет</span>
@@ -74,7 +83,13 @@ async function nextEnd() {
           Следующий энд
         </button>
       </div>
-      <TimerCard title="Синие" :timer="store.timers.blueEnd" tone="blue" @toggle="store.toggleSideTimer('blue')" />
+      <TimerCard
+        title="Синие"
+        :timer="store.timers.blueEnd"
+        tone="blue"
+        :disabled="!canRunSideTimers"
+        @toggle="store.toggleSideTimer('blue')"
+      />
     </div>
 
     <div class="score-row">

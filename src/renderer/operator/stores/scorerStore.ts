@@ -21,7 +21,6 @@ import {
   resetTimer,
   setEndScore,
   setEndTime,
-  setTieBreakScore,
   setTieBreakTime,
   tickRunningTimers,
   toggleExclusiveSideTimer
@@ -52,8 +51,20 @@ type State = {
   lastSnapshotAt: number
 }
 
+type StartMatchOptions = {
+  replaceExisting?: boolean
+}
+
 function toPlain<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T
+}
+
+function isCompletedMatch(match: Match | undefined): boolean {
+  return match?.status === "completed" || match?.phase === "completed"
+}
+
+function canRunSideTimers(match: Match | undefined): boolean {
+  return Boolean(match && !isCompletedMatch(match) && (match.phase === "end" || match.phase === "tieBreak"))
 }
 
 export const useScorerStore = defineStore("scorer", {
@@ -111,9 +122,12 @@ export const useScorerStore = defineStore("scorer", {
       await this.recordAction("settings.reset", {})
       await this.refreshScoreboard()
     },
-    async startStandaloneMatch(gameClassId: string, courtId?: string) {
+    async startStandaloneMatch(gameClassId: string, courtId?: string, options: StartMatchOptions = {}) {
       const gameClass = this.settings.gameClasses.find((item) => item.id === gameClassId)
       if (!gameClass) throw new Error("Класс не найден")
+      if (this.match && !options.replaceExisting) {
+        throw new Error("Уже есть текущий матч. Подтвердите создание нового матча.")
+      }
       this.actionLog = []
       this.match = createStandaloneMatch(gameClass, courtId || undefined)
       this.timers = createMatchTimers(gameClass.endTimeSec, this.settings.timers)
@@ -132,6 +146,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async startWarmup() {
       if (!this.match || !this.timers) return
+      if (isCompletedMatch(this.match)) return
       this.match = beginWarmup(this.match)
       this.timers.warmup = resetTimer(this.timers.warmup)
       await this.recordAction("match.warmup.start", {})
@@ -140,6 +155,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async startEnds() {
       if (!this.match) return
+      if (isCompletedMatch(this.match)) return
       this.match = beginEnds(this.match)
       await this.recordAction("match.ends.start", { end: this.match.activeEndIndex + 1 })
       await this.persistSnapshot(true)
@@ -147,6 +163,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async toggleSideTimer(color: SideColor) {
       if (!this.timers) return
+      if (!canRunSideTimers(this.match)) return
       this.timers = toggleExclusiveSideTimer(this.timers, color === "red" ? "redEnd" : "blueEnd")
       await this.recordAction("timer.side.toggle", { color })
       await this.persistSnapshot(true)
@@ -154,6 +171,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async pauseTimers() {
       if (!this.timers) return
+      if (isCompletedMatch(this.match)) return
       this.timers = pauseAllTimers(this.timers)
       await this.recordAction("timer.pauseAll", {})
       await this.syncEndTimeFromTimers()
@@ -162,6 +180,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async tick() {
       if (!this.timers) return
+      if (isCompletedMatch(this.match) || this.match?.phase === "protocol" || this.match?.phase === "setup") return
       this.timers = tickRunningTimers(this.timers)
       await this.syncEndTimeFromTimers()
       await this.persistSnapshot(false)
@@ -169,17 +188,11 @@ export const useScorerStore = defineStore("scorer", {
     },
     async changeScore(color: SideColor, delta: number) {
       if (!this.match) return
-      if (this.match.phase === "tieBreak") {
-        const current = this.match.tieBreaks.at(-1)
-        if (current?.status !== "inProgress") return
-        const value = color === "red" ? (current?.redScore ?? 0) + delta : (current?.blueScore ?? 0) + delta
-        this.match = setTieBreakScore(this.match, color, value)
-      } else {
-        const current = this.match.ends[this.match.activeEndIndex]
-        if (this.match.phase !== "end" || current?.status !== "inProgress") return
-        const value = color === "red" ? (current?.redScore ?? 0) + delta : (current?.blueScore ?? 0) + delta
-        this.match = setEndScore(this.match, color, value)
-      }
+      if (this.match.phase === "tieBreak") return
+      const current = this.match.ends[this.match.activeEndIndex]
+      if (this.match.phase !== "end" || current?.status !== "inProgress") return
+      const value = color === "red" ? (current?.redScore ?? 0) + delta : (current?.blueScore ?? 0) + delta
+      this.match = setEndScore(this.match, color, value)
       await this.recordAction("score.change", { color, delta })
       await this.persistSnapshot(true)
       await this.refreshScoreboard()
@@ -197,6 +210,7 @@ export const useScorerStore = defineStore("scorer", {
     },
     async nextEnd() {
       if (!this.match || !this.timers || !this.activeGameClass) return
+      if (this.match.phase !== "collectBalls") return
       this.match = goToNextEnd(this.match)
       this.timers.redEnd = resetTimer({ ...this.timers.redEnd, maxSec: this.activeGameClass.endTimeSec })
       this.timers.blueEnd = resetTimer({ ...this.timers.blueEnd, maxSec: this.activeGameClass.endTimeSec })
@@ -216,13 +230,12 @@ export const useScorerStore = defineStore("scorer", {
       await this.persistSnapshot(true)
       await this.refreshScoreboard()
     },
-    async completeTieBreak() {
+    async completeTieBreak(winner: SideColor) {
       if (!this.match) return
       const current = this.match.tieBreaks.at(-1)
       if (this.match.phase !== "tieBreak" || current?.status !== "inProgress") return
-      if (current.redScore === current.blueScore) throw new Error("Тай-брейк нельзя завершить вничью")
       await this.pauseTimers()
-      this.match = completeDomainTieBreak(this.match)
+      this.match = completeDomainTieBreak(this.match, winner)
       await this.recordAction("tiebreak.complete", { tieBreak: this.match.tieBreaks.at(-1) })
       await this.persistSnapshot(true)
       await this.refreshScoreboard()
@@ -266,6 +279,8 @@ export const useScorerStore = defineStore("scorer", {
     },
     async syncEndTimeFromTimers() {
       if (!this.match || !this.timers) return
+      if (isCompletedMatch(this.match)) return
+      if (this.match.phase !== "end" && this.match.phase !== "tieBreak") return
       if (this.match.phase === "tieBreak") {
         this.match = setTieBreakTime(this.match, "red", this.timers.redEnd.elapsedSec)
         this.match = setTieBreakTime(this.match, "blue", this.timers.blueEnd.elapsedSec)

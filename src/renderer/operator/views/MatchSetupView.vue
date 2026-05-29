@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
 import { useRouter } from "vue-router"
-import { formatTimer } from "@shared/domain"
+import { formatMatchResult, formatTimer } from "@shared/domain"
 import { useScorerStore } from "../stores/scorerStore"
 
 const store = useScorerStore()
@@ -11,6 +11,21 @@ const selectedCourtId = ref("")
 const error = ref("")
 
 const classes = computed(() => store.settings.gameClasses.filter((item) => item.active).sort((a, b) => a.sortOrder - b.sortOrder))
+const currentMatchLabel = computed(() => {
+  if (!store.match) return ""
+  const gameClass = store.settings.gameClasses.find((item) => item.id === store.match?.gameClassId)
+  return `${gameClass?.code ?? "Матч"} · ${formatMatchResult(store.match)}`
+})
+const currentMatchRoute = computed(() => {
+  if (!store.match) return "/setup"
+  if (store.match.phase === "setup" || store.match.phase === "warmup") return "/warmup"
+  if (store.match.phase === "protocol" || store.match.phase === "completed") return "/protocol"
+  return "/match"
+})
+const currentMatchStatus = computed(() => {
+  if (!store.match) return ""
+  return store.match.status === "completed" || store.match.phase === "completed" ? "Матч завершен" : "Есть текущий незавершенный матч"
+})
 
 async function start() {
   error.value = ""
@@ -18,7 +33,10 @@ async function start() {
     error.value = "Выберите класс матча"
     return
   }
-  await store.startStandaloneMatch(selectedClassId.value, selectedCourtId.value || undefined)
+  const replaceExisting = Boolean(store.match)
+  if (replaceExisting && !confirm("Создать новый матч? Текущий матч будет заменен в окне оператора и на табло.")) return
+
+  await store.startStandaloneMatch(selectedClassId.value, selectedCourtId.value || undefined, { replaceExisting })
   await store.startWarmup()
   await router.push("/warmup")
 }
@@ -29,6 +47,12 @@ async function start() {
     <p class="eyebrow">Автономный старт</p>
     <h1>Новый матч</h1>
     <p class="lead">Обязателен только класс. Стороны создаются автоматически: Красные и Синие.</p>
+
+    <section v-if="store.match" class="warning-panel">
+      <strong>{{ currentMatchStatus }}</strong>
+      <span>{{ currentMatchLabel }} сейчас остается на табло.</span>
+      <RouterLink class="secondary-action" :to="currentMatchRoute">Вернуться к текущему матчу</RouterLink>
+    </section>
 
     <form class="panel-form" @submit.prevent="start">
       <label>

@@ -6,8 +6,8 @@ import {
   completeTieBreak,
   createStandaloneMatch,
   createTieBreak,
-  setEndScore,
-  setTieBreakScore
+  formatMatchResult,
+  setEndScore
 } from "@shared/domain"
 
 describe("scoring", () => {
@@ -27,21 +27,28 @@ describe("scoring", () => {
     expect(createStandaloneMatch(teamClass!).ends).toHaveLength(6)
   })
 
-  it("rejects tied tie-break completion", () => {
+  it("requires an existing tie-break before selecting its winner", () => {
+    const gameClass = DEFAULT_GAME_CLASSES[0]!
+    const match = createStandaloneMatch(gameClass)
+
+    expect(() => completeTieBreak(match, "red")).toThrow("Тай-брейк не найден")
+  })
+
+  it("completes tie-break with a selected winner without changing the tied main score", () => {
     const gameClass = DEFAULT_GAME_CLASSES[0]!
     const match = createTieBreak(createStandaloneMatch(gameClass), "red")
 
-    expect(() => completeTieBreak(match)).toThrow("Тай-брейк нельзя завершить вничью")
-  })
-
-  it("completes tie-break with a winner", () => {
-    const gameClass = DEFAULT_GAME_CLASSES[0]!
-    let match = createTieBreak(createStandaloneMatch(gameClass), "red")
-    match = setTieBreakScore(match, "red", 1)
-
-    const completed = completeTieBreak(match)
+    const completed = completeTieBreak(match, "red")
 
     expect(completed.phase).toBe("protocol")
     expect(completed.tieBreaks.at(-1)).toMatchObject({ status: "completed", winner: "red" })
+    expect(calculateMatchTotals(completed)).toMatchObject({ red: 0, blue: 0, tied: true, winner: "red" })
+  })
+
+  it("formats a tie-break winner with a star and equal main score", () => {
+    const gameClass = DEFAULT_GAME_CLASSES[0]!
+    const match = completeTieBreak(createTieBreak(createStandaloneMatch(gameClass), "red"), "blue")
+
+    expect(formatMatchResult(match)).toBe("0 : 0*, ТБ")
   })
 })

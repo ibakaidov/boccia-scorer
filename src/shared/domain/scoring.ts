@@ -36,6 +36,15 @@ export function calculateMatchTotals(match: Match): MatchTotals {
   }
 }
 
+export function formatMatchResult(match: Match): string {
+  const totals = calculateMatchTotals(match)
+  const red = `${totals.red}${totals.winner === "red" ? "*" : ""}`
+  const blue = `${totals.blue}${totals.winner === "blue" ? "*" : ""}`
+  const tieBreakLabel = totals.tieBreakWinner ? ", ТБ" : ""
+
+  return `${red} : ${blue}${tieBreakLabel}`
+}
+
 export function allMainEndsCompleted(match: Match): boolean {
   return match.ends.every((end) => end.status === "completed")
 }

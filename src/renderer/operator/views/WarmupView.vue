@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted } from "vue"
+import { computed, onBeforeUnmount, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import { formatTimer } from "@shared/domain"
 import { useScorerStore } from "../stores/scorerStore"
@@ -7,6 +7,7 @@ import { useScorerStore } from "../stores/scorerStore"
 const store = useScorerStore()
 const router = useRouter()
 let interval: number | undefined
+const canUseWarmup = computed(() => store.match?.phase === "setup" || store.match?.phase === "warmup")
 
 onMounted(() => {
   interval = window.setInterval(() => void store.tick(), 1000)
@@ -18,12 +19,14 @@ onBeforeUnmount(() => {
 
 async function startPause() {
   if (!store.timers) return
+  if (!canUseWarmup.value) return
   store.timers.warmup.running = !store.timers.warmup.running
   store.timers.warmup.startedAt = store.timers.warmup.running ? new Date().toISOString() : undefined
   await store.refreshScoreboard()
 }
 
 async function toEnds() {
+  if (!canUseWarmup.value) return
   await store.pauseTimers()
   await store.startEnds()
   await router.push("/match")
@@ -34,12 +37,12 @@ async function toEnds() {
   <section class="page center-page">
     <p class="eyebrow">Разминка</p>
     <h1>{{ store.activeGameClass?.code ?? "Матч" }}</h1>
-    <button class="giant-timer" type="button" @click="startPause">
+    <button class="giant-timer" type="button" :disabled="!canUseWarmup" @click="startPause">
       {{ store.timers ? formatTimer(store.timers.warmup.maxSec - store.timers.warmup.elapsedSec) : "02:00" }}
     </button>
     <div class="button-row center">
-      <button type="button" class="secondary-action" @click="startPause">Старт / пауза</button>
-      <button type="button" class="primary-action" @click="toEnds">Перейти к эндам</button>
+      <button type="button" class="secondary-action" :disabled="!canUseWarmup" @click="startPause">Старт / пауза</button>
+      <button type="button" class="primary-action" :disabled="!canUseWarmup" @click="toEnds">Перейти к эндам</button>
     </div>
   </section>
 </template>

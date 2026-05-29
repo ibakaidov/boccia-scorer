@@ -14,7 +14,7 @@ const scoreboardState: ScoreboardState = {
     label: "Красные",
     timer: { maxSec: 270, elapsedSec: 0, remainingSec: 270, running: false, label: "04:30" },
     endScore: 1,
-    totalScore: 0,
+    totalScore: 4,
     participantsLabel: "Красные"
   },
   blue: {
@@ -31,11 +31,14 @@ const scoreboardState: ScoreboardState = {
   tieBreaks: []
 }
 
+let currentScoreboardState: ScoreboardState
+
 beforeEach(() => {
+  currentScoreboardState = structuredClone(scoreboardState)
   window.bocciaApi = {
     scoreboard: {
       onUpdate: vi.fn((handler: (state: ScoreboardState) => void) => {
-        handler(scoreboardState)
+        handler(currentScoreboardState)
         return () => undefined
       })
     }
@@ -43,12 +46,40 @@ beforeEach(() => {
 })
 
 describe("ScoreboardApp", () => {
-  it("shows current end score on the main board", async () => {
+  it("shows match totals on the main board", async () => {
     const { container } = render(ScoreboardApp)
 
     await waitFor(() => {
       const scores = Array.from(container.querySelectorAll(".board-score")).map((item) => item.textContent?.trim())
-      expect(scores).toEqual(["1", "2"])
+      expect(scores).toEqual(["4", "0"])
+    })
+  })
+
+  it("marks the tie-break winner with a star", async () => {
+    currentScoreboardState = {
+      ...currentScoreboardState,
+      mode: "protocol",
+      red: { ...currentScoreboardState.red, totalScore: 2 },
+      blue: { ...currentScoreboardState.blue, totalScore: 2 },
+      tieBreaks: [
+        {
+          index: 1,
+          firstSide: "red",
+          redScore: 0,
+          blueScore: 0,
+          redTimeUsedSec: 0,
+          blueTimeUsedSec: 0,
+          winner: "red",
+          status: "completed"
+        }
+      ]
+    }
+    const { container } = render(ScoreboardApp)
+
+    await waitFor(() => {
+      const scores = Array.from(container.querySelectorAll(".board-score")).map((item) => item.textContent?.trim())
+      expect(scores).toEqual(["2*", "2"])
+      expect(container.querySelector(".scoreboard-footer")?.textContent).toContain("ТБ1 Красные*")
     })
   })
 })

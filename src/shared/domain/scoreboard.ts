@@ -54,7 +54,7 @@ export function buildScoreboardState(
 
   const gameClass = settings.gameClasses.find((item) => item.id === match.gameClassId)
   const court = settings.courts.find((item) => item.id === match.courtId)
-  const activeEnd = match.ends[match.activeEndIndex]
+  const activeScore = getActiveScore(match)
   const totals = calculateMainTotals(match.ends)
   const mode = getScoreboardMode(match.phase)
   const soloTimer = getSoloTimer(mode, timers)
@@ -65,8 +65,8 @@ export function buildScoreboardState(
     courtName: courtName(court),
     gameClassCode: gameClass?.code ?? "-",
     currentEndLabel: currentEndLabel(match, gameClass),
-    red: buildSide("red", activeEnd, totals.red, timers.redEnd),
-    blue: buildSide("blue", activeEnd, totals.blue, timers.blueEnd),
+    red: buildSide("red", activeScore, totals.red, timers.redEnd),
+    blue: buildSide("blue", activeScore, totals.blue, timers.blueEnd),
     ...(activeTimer ? { activeTimer } : {}),
     ...(soloTimer ? { soloTimer } : {}),
     statusLabel: statusLabel(match.phase),
@@ -78,7 +78,7 @@ export function buildScoreboardState(
 
 function buildSide(
   color: "red" | "blue",
-  activeEnd: Match["ends"][number] | undefined,
+  activeScore: Pick<Match["ends"][number], "redScore" | "blueScore"> | undefined,
   totalScore: number,
   timer: TimerState
 ): ScoreboardSide {
@@ -87,10 +87,16 @@ function buildSide(
     color,
     label,
     timer: createTimerView(timer),
-    endScore: color === "red" ? (activeEnd?.redScore ?? 0) : (activeEnd?.blueScore ?? 0),
+    endScore: color === "red" ? (activeScore?.redScore ?? 0) : (activeScore?.blueScore ?? 0),
     totalScore,
     participantsLabel: label
   }
+}
+
+function getActiveScore(match: Match): Pick<Match["ends"][number], "redScore" | "blueScore"> | undefined {
+  if (match.phase === "tieBreak") return match.tieBreaks.at(-1)
+  if (match.phase === "end") return match.ends[match.activeEndIndex]
+  return undefined
 }
 
 function createTimerView(timer: TimerState): TimerView {
@@ -116,6 +122,7 @@ function getSoloTimer(mode: ScoreboardMode, timers: Record<TimerType, TimerState
 }
 
 function currentEndLabel(match: Match, gameClass: GameClass | undefined): string {
+  if (match.phase === "warmup") return "Разминка"
   if (match.phase === "tieBreak") return `Тай-брейк ${match.tieBreaks.length}`
   if (match.phase === "protocol" || match.phase === "completed") return "Протокол"
   return `Энд ${match.activeEndIndex + 1} из ${gameClass?.endsCount ?? match.ends.length}`

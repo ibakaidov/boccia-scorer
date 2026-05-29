@@ -1,19 +1,16 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
+import { formatMatchResult } from "@shared/domain"
 import { useScorerStore } from "../stores/scorerStore"
+import type { SideColor } from "@shared/domain"
 
 const store = useScorerStore()
 const firstSide = ref<"red" | "blue">("red")
 const error = ref("")
 const totals = computed(() => store.mainTotals())
-const activeTieBreak = computed(() => store.match?.tieBreaks.at(-1))
+const resultLabel = computed(() => (store.match ? formatMatchResult(store.match) : "0 : 0"))
+const protocolEnds = computed(() => store.match?.ends.filter((end) => end.status !== "notStarted") ?? [])
 const canStartTieBreak = computed(() => store.match?.phase === "protocol" && store.needsTieBreak())
-const canCompleteTieBreak = computed(
-  () =>
-    store.match?.phase === "tieBreak" &&
-    activeTieBreak.value?.status === "inProgress" &&
-    activeTieBreak.value.redScore !== activeTieBreak.value.blueScore
-)
 const canFinishMatch = computed(() => store.match?.phase === "protocol" && !store.needsTieBreak())
 
 async function finish() {
@@ -26,10 +23,10 @@ async function finish() {
   }
 }
 
-async function completeTieBreak() {
+async function completeTieBreak(winner: SideColor) {
   error.value = ""
   try {
-    await store.completeTieBreak()
+    await store.completeTieBreak(winner)
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err)
   }
@@ -39,7 +36,7 @@ async function completeTieBreak() {
 <template>
   <section v-if="store.match" class="page protocol-page">
     <p class="eyebrow">Минимальный протокол</p>
-    <h1>{{ totals.red }} : {{ totals.blue }}</h1>
+    <h1>{{ resultLabel }}</h1>
 
     <table class="data-table">
       <thead>
@@ -52,7 +49,7 @@ async function completeTieBreak() {
         </tr>
       </thead>
       <tbody>
-        <tr v-for="end in store.match.ends" :key="end.index">
+        <tr v-for="end in protocolEnds" :key="end.index">
           <td>{{ end.index }}</td>
           <td>{{ end.redScore }}</td>
           <td>{{ end.blueScore }}</td>
@@ -74,19 +71,20 @@ async function completeTieBreak() {
 
     <section v-if="store.match.phase === 'tieBreak'" class="warning-panel">
       <strong>Тай-брейк {{ store.match.tieBreaks.length }}</strong>
+      <span>Основной счет равен: {{ totals.red }} : {{ totals.blue }}. Укажите победителя тай-брейка.</span>
       <div class="button-row">
-        <button type="button" @click="store.changeScore('red', -1)">Красные -</button>
-        <button type="button" @click="store.changeScore('red', 1)">Красные +</button>
-        <button type="button" @click="store.changeScore('blue', -1)">Синие -</button>
-        <button type="button" @click="store.changeScore('blue', 1)">Синие +</button>
+        <button type="button" class="danger-action" @click="completeTieBreak('red')">Победили красные</button>
+        <button type="button" class="primary-action" @click="completeTieBreak('blue')">Победили синие</button>
       </div>
-      <button type="button" class="danger-action" :disabled="!canCompleteTieBreak" @click="completeTieBreak">
-        Завершить тай-брейк
-      </button>
+    </section>
+
+    <section v-if="store.match.phase === 'completed'" class="warning-panel">
+      <strong>Матч завершен</strong>
+      <span>Протокол сохранен. Дальнейшие изменения счета и таймеров заблокированы.</span>
     </section>
 
     <p v-if="error" class="error-text">{{ error }}</p>
-    <button type="button" class="primary-action" :disabled="!canFinishMatch" @click="finish">
+    <button v-if="canFinishMatch" type="button" class="primary-action" @click="finish">
       Завершить матч без кода
     </button>
   </section>

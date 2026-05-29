@@ -59,11 +59,26 @@ describe("scorerStore", () => {
 
     await store.startStandaloneMatch("bc1f")
     await store.recordAction("score.change", { color: "red", delta: 1 })
-    await store.startStandaloneMatch("bc1f")
+    await store.startStandaloneMatch("bc1f", undefined, { replaceExisting: true })
 
     expect(store.actionLog).toHaveLength(1)
     expect(store.actionLog[0]).toMatchObject({ type: "match.create" })
     expect(store.actionLog[0]?.matchClientId).toBe(store.match?.clientId)
+  })
+
+  it("does not replace an existing match without explicit confirmation", async () => {
+    const store = useScorerStore()
+
+    await store.startStandaloneMatch("bc1f")
+    const firstClientId = store.match?.clientId
+
+    await expect(store.startStandaloneMatch("bc1f")).rejects.toThrow("Уже есть текущий матч")
+
+    expect(store.match?.clientId).toBe(firstClientId)
+
+    await store.startStandaloneMatch("bc1f", undefined, { replaceExisting: true })
+
+    expect(store.match?.clientId).not.toBe(firstClientId)
   })
 
   it("does not submit or change a completed end again", async () => {
@@ -82,5 +97,24 @@ describe("scorerStore", () => {
     expect(store.syncQueue).toHaveLength(syncQueueLength)
     expect(store.actionLog).toHaveLength(actionLogLength)
     expect(store.activeEnd).toMatchObject({ redScore: 1, blueScore: 0, status: "completed" })
+  })
+
+  it("does not mutate timers after a match is completed", async () => {
+    const store = useScorerStore()
+
+    await store.startStandaloneMatch("bc1f")
+    store.match = { ...store.match!, status: "completed", phase: "completed" }
+    store.timers = {
+      ...store.timers!,
+      redEnd: { ...store.timers!.redEnd, elapsedSec: 9, running: true }
+    }
+    const actionLogLength = store.actionLog.length
+
+    await store.toggleSideTimer("red")
+    await store.tick()
+    await store.pauseTimers()
+
+    expect(store.timers.redEnd).toMatchObject({ elapsedSec: 9, running: true })
+    expect(store.actionLog).toHaveLength(actionLogLength)
   })
 })

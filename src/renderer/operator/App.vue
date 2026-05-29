@@ -23,8 +23,8 @@ onMounted(() => {
 
       <nav>
         <RouterLink to="/">Старт</RouterLink>
-        <RouterLink to="/setup">Матч</RouterLink>
-        <RouterLink to="/match">Энд</RouterLink>
+        <RouterLink to="/setup">Новый матч</RouterLink>
+        <RouterLink to="/match">Текущий энд</RouterLink>
         <RouterLink to="/protocol">Протокол</RouterLink>
         <RouterLink to="/history">История</RouterLink>
         <RouterLink to="/settings">Настройки</RouterLink>

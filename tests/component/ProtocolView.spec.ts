@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/vue"
 import { createPinia, setActivePinia } from "pinia"
 import { beforeEach, describe, expect, it } from "vitest"
-import { DEFAULT_GAME_CLASSES, createStandaloneMatch } from "@shared/domain"
+import { DEFAULT_GAME_CLASSES, completeMatch, createStandaloneMatch } from "@shared/domain"
 import ProtocolView from "@renderer/operator/views/ProtocolView.vue"
 import { useScorerStore } from "@renderer/operator/stores/scorerStore"
 
@@ -10,7 +10,7 @@ beforeEach(() => {
 })
 
 describe("ProtocolView", () => {
-  it("hides tie-break start controls while a tie-break is active", () => {
+  it("shows tie-break winner controls while a tie-break is active", () => {
     const gameClass = DEFAULT_GAME_CLASSES[0]!
     const match = createStandaloneMatch(gameClass)
     const store = useScorerStore()
@@ -36,7 +36,21 @@ describe("ProtocolView", () => {
 
     expect(screen.queryByText("Нужен тай-брейк")).not.toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "Начать тай-брейк" })).not.toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Завершить тай-брейк" })).toBeDisabled()
-    expect(screen.getByRole("button", { name: "Завершить матч без кода" })).toBeDisabled()
+    expect(screen.getByText("Основной счет равен: 0 : 0. Укажите победителя тай-брейка.")).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: "Победили красные" })).toBeEnabled()
+    expect(screen.getByRole("button", { name: "Победили синие" })).toBeEnabled()
+    expect(screen.queryByRole("button", { name: "Завершить матч без кода" })).not.toBeInTheDocument()
+  })
+
+  it("shows completed status instead of the finish button after match completion", () => {
+    const gameClass = DEFAULT_GAME_CLASSES[0]!
+    const store = useScorerStore()
+    store.match = completeMatch(createStandaloneMatch(gameClass))
+
+    render(ProtocolView)
+
+    expect(screen.getByText("Матч завершен")).toBeInTheDocument()
+    expect(screen.getByText("Протокол сохранен. Дальнейшие изменения счета и таймеров заблокированы.")).toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "Завершить матч без кода" })).not.toBeInTheDocument()
   })
 })

@@ -132,15 +132,14 @@ export function setTieBreakTime(match: Match, color: SideColor, elapsedSec: numb
   return touch({ ...match, tieBreaks })
 }
 
-export function completeTieBreak(match: Match): Match {
+export function completeTieBreak(match: Match, winner: SideColor): Match {
   const activeTieBreak = match.tieBreaks.at(-1)
-  if (!activeTieBreak || activeTieBreak.redScore === activeTieBreak.blueScore) {
-    throw new Error("Тай-брейк нельзя завершить вничью")
+  if (!activeTieBreak) {
+    throw new Error("Тай-брейк не найден")
   }
 
   const tieBreaks = match.tieBreaks.map((tieBreak, index) => {
     if (index !== match.tieBreaks.length - 1) return tieBreak
-    const winner: SideColor = tieBreak.redScore > tieBreak.blueScore ? "red" : "blue"
     return {
       ...tieBreak,
       winner,
