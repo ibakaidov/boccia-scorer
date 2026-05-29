@@ -284,6 +284,44 @@ select {
   color: #bfdbfe;
 }
 
+.end-progress {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.end-dot {
+  width: clamp(14px, 1.2vw, 20px);
+  height: clamp(14px, 1.2vw, 20px);
+  border: 2px solid #93c5fd;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.end-dot.completed {
+  background: #93c5fd;
+}
+
+.end-dot.active {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 5px rgba(147, 197, 253, 0.24);
+}
+
+.end-dot.pending {
+  opacity: 0.72;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .match-grid {
   display: grid;
   grid-template-columns: 1fr 280px 1fr;

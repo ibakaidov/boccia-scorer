@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { useRouter } from "vue-router"
 import { formatTimer } from "@shared/domain"
 import type { SideColor } from "@shared/domain"
+import EndProgress from "../components/EndProgress.vue"
 import TimerCard from "../components/TimerCard.vue"
 import ScoreControls from "../components/ScoreControls.vue"
 import { useScorerStore } from "../stores/scorerStore"
@@ -93,7 +94,7 @@ async function continueTieBreak() {
   <section v-if="store.match && store.timers" class="page match-page">
     <header class="match-header">
       <div>
-        <p class="eyebrow">{{ store.scoreboard.currentEndLabel }}</p>
+        <EndProgress :ends="store.match.ends" :active-index="store.match.activeEndIndex" />
         <h1>{{ store.activeGameClass?.code }} · {{ store.scoreboard.statusLabel }}</h1>
       </div>
       <div class="sync-pill">{{ store.syncLabel }}</div>
