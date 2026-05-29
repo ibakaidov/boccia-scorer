@@ -41,6 +41,42 @@ body {
   font-size: 1.4em;
 }
 
+.scoreboard-end-progress {
+  display: flex;
+  gap: clamp(10px, 1vw, 20px);
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.scoreboard-end-progress.large {
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: min(100%, 280px);
+}
+
+.scoreboard-end-dot {
+  width: clamp(20px, 2vw, 38px);
+  height: clamp(20px, 2vw, 38px);
+  border: clamp(3px, 0.28vw, 6px) solid #cbd7ea;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.scoreboard-end-progress.large .scoreboard-end-dot {
+  width: clamp(34px, 3.4vw, 58px);
+  height: clamp(34px, 3.4vw, 58px);
+}
+
+.scoreboard-end-dot.completed {
+  background: #cbd7ea;
+}
+
+.scoreboard-end-dot.active {
+  background: #ffffff;
+  border-color: #ffffff;
+  box-shadow: 0 0 0 clamp(5px, 0.5vw, 10px) rgba(203, 215, 234, 0.24);
+}
+
 .side-board-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.54fr) minmax(0, 1fr);

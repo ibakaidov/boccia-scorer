@@ -7,6 +7,7 @@ const state = ref<ScoreboardState>(createIdleScoreboard())
 const centerEndLabel = computed(() => (state.value.mode === "idle" ? "-" : state.value.currentEndLabel))
 const redScoreLabel = computed(() => scoreLabel("red"))
 const blueScoreLabel = computed(() => scoreLabel("blue"))
+const showEndProgress = computed(() => state.value.endProgress.length > 0 && state.value.mode !== "warmup")
 let unsubscribe: (() => void) | undefined
 
 onMounted(() => {
@@ -58,7 +59,14 @@ function tieBreakLabel(tieBreak: TieBreakEnd): string {
     <header class="scoreboard-top">
       <span>{{ state.courtName }}</span>
       <strong>{{ state.gameClassCode }}</strong>
-      <span>{{ state.currentEndLabel }}</span>
+      <div v-if="showEndProgress" class="scoreboard-end-progress" :aria-label="state.currentEndLabel">
+        <span
+          v-for="end in state.endProgress"
+          :key="end.index"
+          :class="['scoreboard-end-dot', { completed: end.status === 'completed', active: end.status === 'inProgress' }]"
+        ></span>
+      </div>
+      <span v-else>{{ state.currentEndLabel }}</span>
     </header>
 
     <section v-if="state.soloTimer" class="solo-board">
@@ -76,7 +84,14 @@ function tieBreakLabel(tieBreak: TieBreakEnd): string {
 
       <article class="board-center">
         <span>Энд</span>
-        <strong>{{ centerEndLabel }}</strong>
+        <div v-if="showEndProgress" class="scoreboard-end-progress large" :aria-label="centerEndLabel">
+          <span
+            v-for="end in state.endProgress"
+            :key="`center-${end.index}`"
+            :class="['scoreboard-end-dot', { completed: end.status === 'completed', active: end.status === 'inProgress' }]"
+          ></span>
+        </div>
+        <strong v-else>{{ centerEndLabel }}</strong>
       </article>
 
       <article :class="['board-side', 'blue', { active: state.activeTimer === 'blue' }]">

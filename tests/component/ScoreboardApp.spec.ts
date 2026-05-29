@@ -27,6 +27,12 @@ const scoreboardState: ScoreboardState = {
   },
   statusLabel: "Игра",
   syncLabel: "Автономно",
+  endProgress: [
+    { index: 1, status: "inProgress" },
+    { index: 2, status: "notStarted" },
+    { index: 3, status: "notStarted" },
+    { index: 4, status: "notStarted" }
+  ],
   completedEnds: [],
   tieBreaks: []
 }
@@ -54,6 +60,28 @@ describe("ScoreboardApp", () => {
       expect(scores).toEqual(["1", "2"])
       expect(container.textContent).toContain("Итого: 4")
       expect(container.textContent).toContain("Итого: 0")
+      expect(container.querySelectorAll(".scoreboard-end-dot")).toHaveLength(8)
+    })
+  })
+
+  it("renders six end dots for team matches", async () => {
+    currentScoreboardState = {
+      ...currentScoreboardState,
+      currentEndLabel: "Энд 3 из 6",
+      endProgress: [
+        { index: 1, status: "completed" },
+        { index: 2, status: "completed" },
+        { index: 3, status: "inProgress" },
+        { index: 4, status: "notStarted" },
+        { index: 5, status: "notStarted" },
+        { index: 6, status: "notStarted" }
+      ]
+    }
+    const { container } = render(ScoreboardApp)
+
+    await waitFor(() => {
+      expect(container.querySelectorAll(".scoreboard-end-dot")).toHaveLength(12)
+      expect(container.querySelector(".scoreboard-end-progress")?.getAttribute("aria-label")).toBe("Энд 3 из 6")
     })
   })
 

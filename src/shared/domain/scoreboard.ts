@@ -39,6 +39,7 @@ export function createIdleScoreboard(settings = "Готов к автономн�
     },
     statusLabel: settings,
     syncLabel: "Автономно",
+    endProgress: [],
     completedEnds: [],
     tieBreaks: []
   }
@@ -71,6 +72,7 @@ export function buildScoreboardState(
     ...(soloTimer ? { soloTimer } : {}),
     statusLabel: statusLabel(match.phase),
     syncLabel,
+    endProgress: match.ends.map((end) => ({ index: end.index, status: end.status })),
     completedEnds: match.ends.filter((end) => end.status === "completed"),
     tieBreaks: match.tieBreaks
   }

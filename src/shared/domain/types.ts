@@ -159,6 +159,11 @@ export type ScoreboardSide = {
   participantsLabel: string
 }
 
+export type ScoreboardEndProgressItem = {
+  index: number
+  status: EndStatus
+}
+
 export type ScoreboardState = {
   mode: ScoreboardMode
   courtName: string
@@ -170,6 +175,7 @@ export type ScoreboardState = {
   soloTimer?: TimerView | undefined
   statusLabel: string
   syncLabel: string
+  endProgress: ScoreboardEndProgressItem[]
   completedEnds: End[]
   tieBreaks: TieBreakEnd[]
 }

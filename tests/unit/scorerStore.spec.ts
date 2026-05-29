@@ -193,6 +193,7 @@ function storelessScoreboard() {
     },
     statusLabel: "Автономно",
     syncLabel: "Автономно",
+    endProgress: [],
     completedEnds: [],
     tieBreaks: []
   }
