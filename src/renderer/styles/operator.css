@@ -334,6 +334,18 @@ select {
   font-size: 54px;
 }
 
+.phase-label {
+  color: #bfdbfe;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.collect-timer {
+  font-size: clamp(48px, 5vw, 86px);
+  font-variant-numeric: tabular-nums;
+}
+
 .score-row {
   margin-top: 18px;
 }

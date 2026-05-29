@@ -169,6 +169,16 @@ export const useScorerStore = defineStore("scorer", {
       await this.persistSnapshot(true)
       await this.refreshScoreboard()
     },
+    async toggleCollectBallsTimer() {
+      if (!this.match || !this.timers) return
+      if (isCompletedMatch(this.match)) return
+      if (this.match.phase !== "collectBalls") return
+      this.timers.collectBalls = this.timers.collectBalls.running
+        ? pauseTimer(this.timers.collectBalls)
+        : startTimer(this.timers.collectBalls)
+      await this.persistSnapshot(true)
+      await this.refreshScoreboard()
+    },
     async startEnds() {
       if (!this.match) return
       if (isCompletedMatch(this.match)) return

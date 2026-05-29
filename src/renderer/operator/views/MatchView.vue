@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted } from "vue"
 import { useRouter } from "vue-router"
+import { formatTimer } from "@shared/domain"
 import TimerCard from "../components/TimerCard.vue"
 import ScoreControls from "../components/ScoreControls.vue"
 import { useScorerStore } from "../stores/scorerStore"
@@ -18,6 +19,11 @@ const mainTotals = computed(() => store.mainTotals())
 const canEditEnd = computed(() => store.match?.phase === "end" && activeEnd.value?.status === "inProgress")
 const canCompleteEnd = computed(() => canEditEnd.value)
 const canRunSideTimers = computed(() => store.match?.phase === "end" || store.match?.phase === "tieBreak")
+const isCollectBalls = computed(() => store.match?.phase === "collectBalls")
+const collectBallsLabel = computed(() => {
+  if (!store.timers) return "01:00"
+  return formatTimer(store.timers.collectBalls.maxSec - store.timers.collectBalls.elapsedSec)
+})
 const canPauseTimers = computed(() => {
   if (!store.match || !store.timers) return false
   if (store.match.status === "completed" || store.match.phase === "completed") return false
@@ -86,13 +92,21 @@ async function nextEnd() {
         @toggle="store.toggleSideTimer('red')"
       />
       <div class="central-actions">
-        <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
-        <span>Общий счет</span>
-        <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
-        <button type="button" class="danger-action" :disabled="!canCompleteEnd" @click="completeEnd">Перейти к сбору мячей</button>
-        <button v-if="store.match.phase === 'collectBalls'" type="button" class="primary-action" @click="nextEnd">
-          Начать следующий энд
-        </button>
+        <template v-if="isCollectBalls">
+          <span class="phase-label">Сбор мячей</span>
+          <strong class="collect-timer">{{ collectBallsLabel }}</strong>
+          <span>До начала следующего энда</span>
+          <button type="button" @click="store.toggleCollectBallsTimer">
+            {{ store.timers.collectBalls.running ? "Остановить часы" : "Продолжить сбор" }}
+          </button>
+          <button type="button" class="primary-action" @click="nextEnd">Начать следующий энд</button>
+        </template>
+        <template v-else>
+          <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
+          <span>Общий счет</span>
+          <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
+          <button type="button" class="danger-action" :disabled="!canCompleteEnd" @click="completeEnd">Перейти к сбору мячей</button>
+        </template>
       </div>
       <TimerCard
         title="Синие"
