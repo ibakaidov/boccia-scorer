@@ -4,6 +4,7 @@ import { createWindows, type AppWindows } from "./windows/createWindows"
 import { registerHandlers } from "./ipc/registerHandlers"
 import { LocalDatabase } from "./storage/database"
 import { SyncService } from "./sync/syncService"
+import { configureAutoUpdates } from "./autoUpdater"
 
 let windows: AppWindows | undefined
 
@@ -28,6 +29,7 @@ if (!gotLock) {
 
     windows = createWindows(preloadPath)
     registerHandlers(database, syncService, () => windows?.operator, () => windows?.scoreboard)
+    configureAutoUpdates()
 
     app.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {

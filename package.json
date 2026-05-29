@@ -1,6 +1,6 @@
 {
   "name": "boccia-scorer-v2",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "Offline-first boccia scoring desktop application",
   "main": "./out/main/index.js",
   "type": "module",
@@ -31,6 +31,7 @@
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
     "better-sqlite3": "^11.9.1",
+    "electron-updater": "^6.8.3",
     "pinia": "^2.3.1",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
@@ -38,8 +39,8 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.49.1",
-    "@testing-library/vue": "^8.1.0",
     "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/vue": "^8.1.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/node": "^22.10.5",
     "@vitejs/plugin-vue": "^5.2.1",
@@ -52,8 +53,8 @@
     "eslint-plugin-vue": "^9.32.0",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
-    "typescript-eslint": "^8.19.1",
     "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.1",
     "vite": "^5.4.11",
     "vitest": "^2.1.8",
     "vue-eslint-parser": "^9.4.3",
@@ -62,6 +63,7 @@
   "build": {
     "appId": "org.boccia.scorer.v2",
     "productName": "Boccia Scorer v2",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "files": [
       "out/**",
       "package.json"
@@ -69,20 +71,42 @@
     "directories": {
       "output": "release"
     },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "ibakaidov",
+        "repo": "boccia-scorer",
+        "releaseType": "release"
+      }
+    ],
     "win": {
       "target": [
         "nsis",
         "portable"
-      ]
+      ],
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
     },
     "linux": {
       "target": [
         "AppImage"
-      ]
+      ],
+      "category": "Utility"
     },
     "mac": {
+      "category": "public.app-category.sports",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist",
+      "notarize": true,
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ]
     }
   }
