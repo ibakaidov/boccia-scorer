@@ -59,6 +59,7 @@ body {
 
 .scoreboard-end-progress {
   display: flex;
+  flex-wrap: nowrap;
   gap: clamp(10px, 1vw, 20px);
   align-items: center;
   justify-content: flex-end;
@@ -66,8 +67,7 @@ body {
 
 .scoreboard-end-progress.large {
   justify-content: center;
-  flex-wrap: wrap;
-  max-width: min(100%, 280px);
+  max-width: none;
 }
 
 .scoreboard-end-dot {
@@ -79,8 +79,8 @@ body {
 }
 
 .scoreboard-end-progress.large .scoreboard-end-dot {
-  width: clamp(34px, 3.4vw, 58px);
-  height: clamp(34px, 3.4vw, 58px);
+  width: clamp(28px, 2.6vw, 52px);
+  height: clamp(28px, 2.6vw, 52px);
 }
 
 .scoreboard-end-dot.completed {
@@ -121,14 +121,30 @@ body {
   border-color: rgba(255, 255, 255, 0.34);
 }
 
+.theme-split .board-side {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .board-side.red {
   border-color: #ef4444;
   box-shadow: inset 0 0 0 1vw rgba(239, 68, 68, 0.08);
 }
 
+.theme-split .board-side.red {
+  border-color: transparent;
+  box-shadow: none;
+}
+
 .board-side.blue {
   border-color: #3b82f6;
   box-shadow: inset 0 0 0 1vw rgba(59, 130, 246, 0.08);
+}
+
+.theme-split .board-side.blue {
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .board-side.active {
