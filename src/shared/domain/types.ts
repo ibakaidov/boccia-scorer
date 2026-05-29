@@ -51,6 +51,7 @@ export type Dictionaries = {
 }
 
 export type SideColor = "red" | "blue"
+export type SideDisplayNames = Partial<Record<SideColor, string>>
 
 export type ParticipantRef = {
   participantId: string
@@ -60,6 +61,7 @@ export type ParticipantRef = {
 export type Side = {
   color: SideColor
   label: "Красные" | "Синие"
+  displayName?: string | undefined
   participants?: ParticipantRef[] | undefined
 }
 

@@ -47,8 +47,8 @@ function getLatestTieBreakWinner(tieBreaks: TieBreakEnd[]): SideColor | undefine
 }
 
 function tieBreakLabel(tieBreak: TieBreakEnd): string {
-  if (tieBreak.winner === "red") return `ТБ${tieBreak.index} Красные*`
-  if (tieBreak.winner === "blue") return `ТБ${tieBreak.index} Синие*`
+  if (tieBreak.winner === "red") return `ТБ${tieBreak.index} ${state.value.red.label}*`
+  if (tieBreak.winner === "blue") return `ТБ${tieBreak.index} ${state.value.blue.label}*`
   if (tieBreak.status === "completed") return `ТБ${tieBreak.index} равноудалено`
   return `ТБ${tieBreak.index}`
 }

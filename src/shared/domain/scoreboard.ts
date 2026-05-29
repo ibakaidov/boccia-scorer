@@ -5,6 +5,7 @@ import type {
   Court,
   GameClass,
   Match,
+  Side,
   ScoreboardMode,
   ScoreboardSide,
   ScoreboardState,
@@ -66,8 +67,8 @@ export function buildScoreboardState(
     courtName: courtName(court),
     gameClassCode: gameClass?.code ?? "-",
     currentEndLabel: currentEndLabel(match, gameClass),
-    red: buildSide("red", activeScore, totals.red, timers.redEnd),
-    blue: buildSide("blue", activeScore, totals.blue, timers.blueEnd),
+    red: buildSide(match.redSide, activeScore, totals.red, timers.redEnd),
+    blue: buildSide(match.blueSide, activeScore, totals.blue, timers.blueEnd),
     ...(activeTimer ? { activeTimer } : {}),
     ...(soloTimer ? { soloTimer } : {}),
     statusLabel: statusLabel(match.phase),
@@ -79,17 +80,17 @@ export function buildScoreboardState(
 }
 
 function buildSide(
-  color: "red" | "blue",
+  side: Side,
   activeScore: Pick<Match["ends"][number], "redScore" | "blueScore"> | undefined,
   totalScore: number,
   timer: TimerState
 ): ScoreboardSide {
-  const label = color === "red" ? "Красные" : "Синие"
+  const label = side.displayName?.trim() || side.label
   return {
-    color,
+    color: side.color,
     label,
     timer: createTimerView(timer),
-    endScore: color === "red" ? (activeScore?.redScore ?? 0) : (activeScore?.blueScore ?? 0),
+    endScore: side.color === "red" ? (activeScore?.redScore ?? 0) : (activeScore?.blueScore ?? 0),
     totalScore,
     participantsLabel: label
   }

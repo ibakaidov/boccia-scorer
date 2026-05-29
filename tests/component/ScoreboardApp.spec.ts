@@ -64,6 +64,22 @@ describe("ScoreboardApp", () => {
     })
   })
 
+  it("shows side names instead of color labels", async () => {
+    currentScoreboardState = {
+      ...currentScoreboardState,
+      red: { ...currentScoreboardState.red, label: "Иванов Иван", participantsLabel: "Иванов Иван" },
+      blue: { ...currentScoreboardState.blue, label: "Петров Петр", participantsLabel: "Петров Петр" }
+    }
+    const { container } = render(ScoreboardApp)
+
+    await waitFor(() => {
+      expect(container.textContent).toContain("Иванов Иван")
+      expect(container.textContent).toContain("Петров Петр")
+      expect(container.textContent).not.toContain("Красные")
+      expect(container.textContent).not.toContain("Синие")
+    })
+  })
+
   it("renders six end dots for team matches", async () => {
     currentScoreboardState = {
       ...currentScoreboardState,

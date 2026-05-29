@@ -118,6 +118,9 @@ body {
 .board-center span {
   font-size: clamp(28px, 4vw, 72px);
   font-weight: 900;
+  line-height: 1;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .board-side strong,

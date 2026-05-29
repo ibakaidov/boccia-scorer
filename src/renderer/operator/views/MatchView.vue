@@ -102,7 +102,7 @@ async function continueTieBreak() {
 
     <div class="match-grid">
       <TimerCard
-        title="Красные"
+        :title="store.scoreboard.red.label"
         :timer="store.timers.redEnd"
         tone="red"
         :disabled="!canRunSideTimers"
@@ -148,7 +148,7 @@ async function continueTieBreak() {
         </template>
       </div>
       <TimerCard
-        title="Синие"
+        :title="store.scoreboard.blue.label"
         :timer="store.timers.blueEnd"
         tone="blue"
         :disabled="!canRunSideTimers"
@@ -159,7 +159,7 @@ async function continueTieBreak() {
     <div class="score-row">
       <ScoreControls
         color="red"
-        label="Красные"
+        :label="store.scoreboard.red.label"
         :score="activeScore?.redScore ?? 0"
         :total="mainTotals.red"
         :disabled="!canEditEnd"
@@ -167,7 +167,7 @@ async function continueTieBreak() {
       />
       <ScoreControls
         color="blue"
-        label="Синие"
+        :label="store.scoreboard.blue.label"
         :score="activeScore?.blueScore ?? 0"
         :total="mainTotals.blue"
         :disabled="!canEditEnd"

@@ -8,6 +8,8 @@ const store = useScorerStore()
 const router = useRouter()
 const selectedClassId = ref("")
 const selectedCourtId = ref("")
+const redSideName = ref("")
+const blueSideName = ref("")
 const error = ref("")
 
 const classes = computed(() => store.settings.gameClasses.filter((item) => item.active).sort((a, b) => a.sortOrder - b.sortOrder))
@@ -37,7 +39,13 @@ async function start() {
   const replaceExisting = Boolean(store.match)
   if (replaceExisting && !confirm("Создать новый матч? Текущий матч будет заменен в окне оператора и на табло.")) return
 
-  await store.startStandaloneMatch(selectedClassId.value, selectedCourtId.value || undefined, { replaceExisting })
+  await store.startStandaloneMatch(selectedClassId.value, selectedCourtId.value || undefined, {
+    replaceExisting,
+    sideNames: {
+      red: redSideName.value,
+      blue: blueSideName.value
+    }
+  })
   await store.startWarmup()
   await router.push("/warmup")
 }
@@ -47,7 +55,7 @@ async function start() {
   <section class="page narrow-page">
     <p class="eyebrow">Автономный старт</p>
     <h1>Новый матч</h1>
-    <p class="lead">Обязателен только класс. Стороны создаются автоматически: Красные и Синие.</p>
+    <p class="lead">Обязателен только класс. Фамилии можно оставить пустыми, тогда стороны будут Красные и Синие.</p>
 
     <section v-if="store.match" class="warning-panel">
       <strong>{{ currentMatchStatus }}</strong>
@@ -74,6 +82,16 @@ async function start() {
             {{ court.name }}
           </option>
         </select>
+      </label>
+
+      <label>
+        Красная сторона, фамилия/имя необязательно
+        <input v-model="redSideName" type="text" placeholder="Красные" />
+      </label>
+
+      <label>
+        Синяя сторона, фамилия/имя необязательно
+        <input v-model="blueSideName" type="text" placeholder="Синие" />
       </label>
 
       <p v-if="error" class="error-text">{{ error }}</p>

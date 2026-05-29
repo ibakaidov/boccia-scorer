@@ -343,6 +343,8 @@ select {
 .timer-card header {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
+  overflow-wrap: anywhere;
 }
 
 .timer-card.red {
@@ -415,6 +417,11 @@ select {
   display: block;
   font-size: 90px;
   line-height: 1;
+}
+
+.score-card span {
+  display: block;
+  overflow-wrap: anywhere;
 }
 
 .score-card.red {

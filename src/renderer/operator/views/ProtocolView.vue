@@ -14,6 +14,8 @@ const resultLabel = computed(() => (store.match ? formatMatchResult(store.match)
 const protocolEnds = computed(() => store.match?.ends.filter((end) => end.status !== "notStarted") ?? [])
 const canStartTieBreak = computed(() => store.match?.phase === "protocol" && store.needsTieBreak())
 const canFinishMatch = computed(() => store.match?.phase === "protocol" && !store.needsTieBreak())
+const redLabel = computed(() => store.scoreboard.red.label)
+const blueLabel = computed(() => store.scoreboard.blue.label)
 
 async function finish() {
   error.value = ""
@@ -56,10 +58,10 @@ async function completeTieBreak(winner: SideColor) {
       <thead>
         <tr>
           <th>Энд</th>
-          <th>Красные</th>
-          <th>Синие</th>
-          <th>Время красных</th>
-          <th>Время синих</th>
+          <th>{{ redLabel }}</th>
+          <th>{{ blueLabel }}</th>
+          <th>Время: {{ redLabel }}</th>
+          <th>Время: {{ blueLabel }}</th>
         </tr>
       </thead>
       <tbody>
@@ -77,8 +79,8 @@ async function completeTieBreak(winner: SideColor) {
       <strong>Нужен тай-брейк</strong>
       <span>После основных эндов счет равный.</span>
       <select v-model="firstSide">
-        <option value="red">Первый мяч: Красные</option>
-        <option value="blue">Первый мяч: Синие</option>
+        <option value="red">Первый мяч: {{ redLabel }}</option>
+        <option value="blue">Первый мяч: {{ blueLabel }}</option>
       </select>
       <button type="button" class="primary-action" @click="startTieBreak">Начать тай-брейк</button>
     </section>
@@ -87,8 +89,8 @@ async function completeTieBreak(winner: SideColor) {
       <strong>Тай-брейк {{ store.match.tieBreaks.length }}</strong>
       <span>Основной счет равен: {{ totals.red }} : {{ totals.blue }}. Укажите победителя тай-брейка.</span>
       <div class="button-row">
-        <button type="button" class="danger-action" @click="completeTieBreak('red')">Победили красные</button>
-        <button type="button" class="primary-action" @click="completeTieBreak('blue')">Победили синие</button>
+        <button type="button" class="danger-action" @click="completeTieBreak('red')">Победили: {{ redLabel }}</button>
+        <button type="button" class="primary-action" @click="completeTieBreak('blue')">Победили: {{ blueLabel }}</button>
       </div>
     </section>
 

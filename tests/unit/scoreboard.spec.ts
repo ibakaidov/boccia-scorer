@@ -64,6 +64,17 @@ describe("buildScoreboardState", () => {
     expect(state.blue.totalScore).toBe(0)
   })
 
+  it("uses standalone side names as scoreboard labels", () => {
+    const match = createStandaloneMatch(gameClass, undefined, { red: "Иванов Иван", blue: "Петров Петр" })
+
+    const state = buildScoreboardState(match, timers, DEFAULT_SETTINGS, "Автономно")
+
+    expect(state.red.label).toBe("Иванов Иван")
+    expect(state.blue.label).toBe("Петров Петр")
+    expect(state.red.participantsLabel).toBe("Иванов Иван")
+    expect(state.blue.participantsLabel).toBe("Петров Петр")
+  })
+
   it("uses the active tie-break as active score instead of the last main end", () => {
     const tieBreak: TieBreakEnd = {
       index: 1,

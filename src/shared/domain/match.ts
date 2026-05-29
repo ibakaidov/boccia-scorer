@@ -1,5 +1,5 @@
 import { createId, nowIso } from "./ids"
-import type { End, GameClass, Match, Side, SideColor, TieBreakEnd } from "./types"
+import type { End, GameClass, Match, Side, SideColor, SideDisplayNames, TieBreakEnd } from "./types"
 
 export function createEnds(count: number): End[] {
   return Array.from({ length: count }, (_, index) => ({
@@ -12,10 +12,10 @@ export function createEnds(count: number): End[] {
   }))
 }
 
-export function createStandaloneMatch(gameClass: GameClass, courtId?: string): Match {
+export function createStandaloneMatch(gameClass: GameClass, courtId?: string, sideNames: SideDisplayNames = {}): Match {
   const createdAt = nowIso()
-  const redSide: Side = { color: "red", label: "Красные" }
-  const blueSide: Side = { color: "blue", label: "Синие" }
+  const redSide: Side = createSide("red", "Красные", sideNames.red)
+  const blueSide: Side = createSide("blue", "Синие", sideNames.blue)
 
   return {
     id: createId("match"),
@@ -31,6 +31,15 @@ export function createStandaloneMatch(gameClass: GameClass, courtId?: string): M
     phase: "setup",
     createdAt,
     updatedAt: createdAt
+  }
+}
+
+function createSide(color: SideColor, label: Side["label"], displayName: string | undefined): Side {
+  const normalizedName = displayName?.trim()
+  return {
+    color,
+    label,
+    ...(normalizedName ? { displayName: normalizedName } : {})
   }
 }
 

@@ -36,6 +36,7 @@ import type {
   Match,
   ScoreboardState,
   SideColor,
+  SideDisplayNames,
   SyncQueueItem,
   TimerState,
   TimerType
@@ -56,6 +57,7 @@ type State = {
 
 type StartMatchOptions = {
   replaceExisting?: boolean
+  sideNames?: SideDisplayNames
 }
 
 function toPlain<T>(value: T): T {
@@ -138,9 +140,9 @@ export const useScorerStore = defineStore("scorer", {
         throw new Error("Уже есть текущий матч. Подтвердите создание нового матча.")
       }
       this.actionLog = []
-      this.match = createStandaloneMatch(gameClass, courtId || undefined)
+      this.match = createStandaloneMatch(gameClass, courtId || undefined, options.sideNames)
       this.timers = createMatchTimers(gameClass.endTimeSec, this.settings.timers)
-      await this.recordAction("match.create", { gameClassId, courtId })
+      await this.recordAction("match.create", { gameClassId, courtId, sideNames: options.sideNames ?? null })
       await this.enqueue("startMatch", {
         clientMatchId: this.match.clientId,
         courtId: this.match.courtId ?? null,
