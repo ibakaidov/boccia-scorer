@@ -1,6 +1,31 @@
 # Boccia Scorer v2
 
-Desktop offline-first scorer for boccia matches.
+Десктопный offline-first счетчик для матчей по бочча. Приложение открывает окно оператора и отдельное read-only табло, ведет таймеры сторон, счет по эндам и тай-брейкам, сохраняет завершенные матчи в SQLite и умеет складывать отправку результатов в очередь синхронизации.
+
+## Скачать
+
+Последний релиз: https://github.com/ibakaidov/boccia-scorer/releases/latest
+
+Лендинг GitHub Pages: https://ibakaidov.github.io/boccia-scorer/
+
+Артефакты релиза:
+
+| Платформа | Артефакт | Примечание |
+|---|---|---|
+| macOS | `dmg`, `zip` | Подписывается Developer ID и готовится к notarization |
+| Windows | `nsis`, `portable` | Без подписи; SmartScreen может показать предупреждение |
+| Linux | `AppImage` | Запускается как переносимый desktop artifact |
+
+Auto-update использует GitHub Releases. Проверка обновлений запускается только в packaged-приложении и не блокирует работу счетчика.
+
+## Возможности
+
+- Окно оператора и отдельное крупное табло.
+- Автономный матч по классу и сторонам `Красные`/`Синие` без сервера.
+- Разминка, таймеры сторон, сбор мячей, энды и тай-брейк.
+- История завершенных матчей в SQLite.
+- Журнал действий и очередь offline-синхронизации.
+- Типизированный preload API без прямого доступа renderer к Node.js.
 
 ## Stack
 
@@ -40,13 +65,18 @@ BuildKit image targets:
 ./scripts/docker-task.sh package-image
 ```
 
-## Current Scope
+## Release
 
-- Operator window and read-only scoreboard window.
-- Standalone match start by game class only.
-- Russian-only UI.
-- Timers use `elapsedSec` as source of truth.
-- Score by ends and tie-breaks.
-- Completed match history in SQLite.
-- Action log and offline sync queue.
-- Typed preload API instead of direct renderer access to Node.js.
+CI запускает `typecheck`, `lint`, `test` и `build` на push/PR. Релизная сборка запускается по тегам `v*` или вручную через GitHub Actions и публикует artifacts в GitHub Release.
+
+Для macOS signing/notarization нужны GitHub Actions secrets:
+
+```text
+CSC_LINK
+CSC_KEY_PASSWORD
+APPLE_ID
+APPLE_APP_SPECIFIC_PASSWORD
+APPLE_TEAM_ID
+```
+
+Windows релиз намеренно остается unsigned. Это учитывается в CI и updater-конфигурации.
