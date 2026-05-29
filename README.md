@@ -12,7 +12,7 @@
 
 | Платформа | Артефакт | Примечание |
 |---|---|---|
-| macOS | `dmg`, `zip` | Подписывается Developer ID и готовится к notarization |
+| macOS | `dmg`, `zip` | Подписывается Developer ID; notarization включим после валидного Apple app-specific password |
 | Windows | `nsis`, `portable` | Без подписи; SmartScreen может показать предупреждение |
 | Linux | `AppImage` | Запускается как переносимый desktop artifact |
 
@@ -69,14 +69,14 @@ BuildKit image targets:
 
 CI запускает `typecheck`, `lint`, `test` и `build` на push/PR. Релизная сборка запускается по тегам `v*` или вручную через GitHub Actions и публикует artifacts в GitHub Release.
 
-Для macOS signing/notarization нужны GitHub Actions secrets:
+Для macOS signing нужны GitHub Actions secrets:
 
 ```text
 CSC_LINK
 CSC_KEY_PASSWORD
-APPLE_ID
-APPLE_APP_SPECIFIC_PASSWORD
 APPLE_TEAM_ID
 ```
+
+Для notarization дополнительно нужны валидные `APPLE_ID` и `APPLE_APP_SPECIFIC_PASSWORD`; сейчас notarization отключена, потому что Apple вернул `401 Invalid credentials` для переданного app-specific password.
 
 Windows релиз намеренно остается unsigned. Это учитывается в CI и updater-конфигурации.

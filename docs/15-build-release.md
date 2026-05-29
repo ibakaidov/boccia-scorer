@@ -50,17 +50,21 @@ Auto-update использует GitHub Releases provider из `electron-builder
 
 ## Подпись macOS
 
-Для macOS release нужны GitHub Actions secrets:
+Для macOS signing нужны GitHub Actions secrets:
 
 ```text
 CSC_LINK
 CSC_KEY_PASSWORD
-APPLE_ID
-APPLE_APP_SPECIFIC_PASSWORD
 APPLE_TEAM_ID
 ```
 
-`CSC_LINK` должен содержать base64 от `Developer ID Application` p12. `APPLE_APP_SPECIFIC_PASSWORD` нужен для notarization через Apple ID.
+`CSC_LINK` должен содержать base64 от `Developer ID Application` p12.
+
+Notarization сейчас отключена в `electron-builder`, потому что Apple вернул `401 Invalid credentials` для переданного app-specific password. Чтобы включить notarization, нужно:
+
+1. Получить новый валидный Apple app-specific password для Apple ID команды.
+2. Обновить GitHub Actions secrets `APPLE_ID` и `APPLE_APP_SPECIFIC_PASSWORD`.
+3. Вернуть `build.mac.notarize` в `true`.
 
 ## Windows без подписи
 
