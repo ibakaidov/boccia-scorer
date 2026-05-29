@@ -12,7 +12,7 @@ onMounted(() => {
 
 <template>
   <section class="page">
-    <p class="eyebrow">SQLite</p>
+    <p class="eyebrow">Локальная база</p>
     <h1>История завершенных матчей</h1>
     <table class="data-table">
       <thead>
@@ -20,7 +20,7 @@ onMounted(() => {
           <th>Дата</th>
           <th>Класс</th>
           <th>Счет</th>
-          <th>Client ID</th>
+          <th>Идентификатор</th>
         </tr>
       </thead>
       <tbody>

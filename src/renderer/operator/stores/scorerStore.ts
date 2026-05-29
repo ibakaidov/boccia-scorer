@@ -100,9 +100,9 @@ export const useScorerStore = defineStore("scorer", {
     syncLabel(state): string {
       const pending = state.syncQueue.filter((item) => item.status === "pending").length
       const failed = state.syncQueue.filter((item) => item.status === "failed").length
-      if (failed > 0) return `Sync: ${failed} failed`
-      if (pending > 0) return `Sync: ${pending} pending`
-      return state.settings.server.enabled ? "Sync: готов" : "Автономно"
+      if (failed > 0) return `Ошибки передачи: ${failed}`
+      if (pending > 0) return `Ожидают передачи: ${pending}`
+      return state.settings.server.enabled ? "Передача готова" : "Автономный режим"
     }
   },
   actions: {

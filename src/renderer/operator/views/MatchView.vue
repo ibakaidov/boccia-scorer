@@ -55,7 +55,7 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 async function completeEnd() {
-  if (!confirm("Отправить энд? Проверьте счет и использованное время.")) return
+  if (!confirm("Перейти к сбору мячей? Проверьте счет и использованное время.")) return
   await store.completeEnd()
   if (store.match?.phase === "protocol") {
     await router.push("/protocol")
@@ -88,10 +88,10 @@ async function nextEnd() {
       <div class="central-actions">
         <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
         <span>Общий счет</span>
-        <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Пауза всех таймеров</button>
-        <button type="button" class="danger-action" :disabled="!canCompleteEnd" @click="completeEnd">Отправить энд</button>
+        <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Остановить часы</button>
+        <button type="button" class="danger-action" :disabled="!canCompleteEnd" @click="completeEnd">Перейти к сбору мячей</button>
         <button v-if="store.match.phase === 'collectBalls'" type="button" class="primary-action" @click="nextEnd">
-          Следующий энд
+          Начать следующий энд
         </button>
       </div>
       <TimerCard
@@ -122,7 +122,7 @@ async function nextEnd() {
       />
     </div>
 
-    <footer class="hotkey-strip">Z - красные · M - синие · Space - пауза · счет меняется без подтверждения</footer>
+    <footer class="hotkey-strip">Z - часы красных · M - часы синих · Пробел - остановить часы · счет меняется без подтверждения</footer>
   </section>
 
   <section v-else class="page narrow-page">

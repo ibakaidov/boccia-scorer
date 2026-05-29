@@ -18,7 +18,7 @@ defineEmits<{
   <section :class="['timer-card', tone ?? 'neutral', { running: timer.running }]">
     <header>
       <span>{{ title }}</span>
-      <strong>{{ timer.running ? "Идет" : "Пауза" }}</strong>
+      <strong>{{ timer.running ? "Время идет" : "Остановлено" }}</strong>
     </header>
     <button class="timer-face" type="button" :disabled="disabled" @click="$emit('toggle')">
       {{ formatTimer(timer.maxSec - timer.elapsedSec) }}

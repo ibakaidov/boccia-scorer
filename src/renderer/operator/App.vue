@@ -12,14 +12,14 @@ const store = useScorerStore()
         <span class="brand-mark">BC</span>
         <div>
           <strong>Boccia Scorer</strong>
-          <small>v2 offline-first</small>
+          <small>версия 2 · автономный режим</small>
         </div>
       </div>
 
       <nav>
-        <RouterLink to="/">Старт</RouterLink>
+        <RouterLink to="/">Главная</RouterLink>
         <RouterLink to="/setup">Новый матч</RouterLink>
-        <RouterLink to="/match">Текущий энд</RouterLink>
+        <RouterLink to="/match">Матч</RouterLink>
         <RouterLink to="/protocol">Протокол</RouterLink>
         <RouterLink to="/history">История</RouterLink>
         <RouterLink to="/settings">Настройки</RouterLink>
@@ -27,7 +27,7 @@ const store = useScorerStore()
 
       <div class="status-card">
         <span :class="['status-dot', store.status.serverOnline ? 'online' : 'offline']"></span>
-        <span>{{ store.status.serverOnline ? "Сервер online" : "Автономно" }}</span>
+        <span>{{ store.status.serverOnline ? "Сервер подключен" : "Автономный режим" }}</span>
         <small>{{ store.syncLabel }}</small>
       </div>
     </aside>

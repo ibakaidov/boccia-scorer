@@ -46,8 +46,8 @@ const currentMatchStatus = computed(() => {
     <div class="dashboard-grid">
       <article class="metric-card">
         <span>Сервер</span>
-        <strong>{{ store.status.serverOnline ? "Online" : "Offline" }}</strong>
-        <small>Offline является штатным режимом</small>
+        <strong>{{ store.status.serverOnline ? "Подключен" : "Автономно" }}</strong>
+        <small>Автономная работа является штатным режимом</small>
       </article>
       <article class="metric-card">
         <span>Активные классы</span>
@@ -55,14 +55,14 @@ const currentMatchStatus = computed(() => {
         <small>Дефолты 2025-2028</small>
       </article>
       <article class="metric-card">
-        <span>Очередь sync</span>
+        <span>Очередь передачи</span>
         <strong>{{ store.syncQueue.length }}</strong>
         <small>{{ store.syncLabel }}</small>
       </article>
       <article class="metric-card">
         <span>История</span>
         <strong>{{ store.history.length }}</strong>
-        <small>Завершенные матчи SQLite</small>
+        <small>Завершенные матчи в локальной базе</small>
       </article>
     </div>
   </section>
