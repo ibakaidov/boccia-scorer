@@ -21,7 +21,12 @@ onBeforeUnmount(() => {
 
 function scoreLabel(color: SideColor): string {
   const side = color === "red" ? state.value.red : state.value.blue
-  return `${side.totalScore}${scoreboardWinner() === color ? "*" : ""}`
+  const score = isLiveScoreMode() ? side.endScore : side.totalScore
+  return `${score}${scoreboardWinner() === color ? "*" : ""}`
+}
+
+function isLiveScoreMode(): boolean {
+  return state.value.mode === "end" || state.value.mode === "tieBreak"
 }
 
 function scoreboardWinner(): SideColor | undefined {
@@ -65,6 +70,7 @@ function tieBreakLabel(tieBreak: TieBreakEnd): string {
         <span>{{ state.red.label }}</span>
         <strong>{{ state.red.timer.label }}</strong>
         <div class="board-score">{{ redScoreLabel }}</div>
+        <small v-if="isLiveScoreMode()">Итого: {{ state.red.totalScore }}</small>
       </article>
 
       <article class="board-center">
@@ -76,6 +82,7 @@ function tieBreakLabel(tieBreak: TieBreakEnd): string {
         <span>{{ state.blue.label }}</span>
         <strong>{{ state.blue.timer.label }}</strong>
         <div class="board-score">{{ blueScoreLabel }}</div>
+        <small v-if="isLiveScoreMode()">Итого: {{ state.blue.totalScore }}</small>
       </article>
     </section>
 

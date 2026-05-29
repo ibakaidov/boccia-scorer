@@ -50,6 +50,13 @@ export class LocalDatabase {
       .run({ key: "active", payload: JSON.stringify(snapshot), savedAt: snapshot.savedAt })
   }
 
+  loadSnapshot(): MatchSnapshot | undefined {
+    const row = this.db.prepare("SELECT payload FROM snapshots WHERE key = ?").get("active") as
+      | DbRow
+      | undefined
+    return row ? (JSON.parse(row.payload) as MatchSnapshot) : undefined
+  }
+
   saveCompletedMatch(match: Match): void {
     this.db
       .prepare(

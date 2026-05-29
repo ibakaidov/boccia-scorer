@@ -18,10 +18,12 @@ import {
   needsTieBreak as matchNeedsTieBreak,
   nowIso,
   pauseAllTimers,
+  pauseTimer,
   resetTimer,
   setEndScore,
   setEndTime,
   setTieBreakTime,
+  startTimer,
   tickRunningTimers,
   toggleExclusiveSideTimer
 } from "@shared/domain"
@@ -109,6 +111,12 @@ export const useScorerStore = defineStore("scorer", {
       this.status = await window.bocciaApi.app.getStatus()
       this.syncQueue = await window.bocciaApi.sync.list()
       this.history = await window.bocciaApi.match.listHistory()
+      const snapshot = await window.bocciaApi.match.loadSnapshot()
+      if (snapshot?.match && snapshot.timers) {
+        this.match = snapshot.match
+        this.timers = snapshot.timers
+        this.scoreboard = snapshot.scoreboard
+      }
       await this.refreshScoreboard()
       this.loaded = true
     },
@@ -150,6 +158,14 @@ export const useScorerStore = defineStore("scorer", {
       this.match = beginWarmup(this.match)
       this.timers.warmup = resetTimer(this.timers.warmup)
       await this.recordAction("match.warmup.start", {})
+      await this.persistSnapshot(true)
+      await this.refreshScoreboard()
+    },
+    async toggleWarmupTimer() {
+      if (!this.match || !this.timers) return
+      if (isCompletedMatch(this.match)) return
+      if (this.match.phase !== "setup" && this.match.phase !== "warmup") return
+      this.timers.warmup = this.timers.warmup.running ? pauseTimer(this.timers.warmup) : startTimer(this.timers.warmup)
       await this.persistSnapshot(true)
       await this.refreshScoreboard()
     },
@@ -202,6 +218,9 @@ export const useScorerStore = defineStore("scorer", {
       if (this.match.phase !== "end" || this.activeEnd?.status !== "inProgress") return
       await this.pauseTimers()
       this.match = completeCurrentEnd(this.match)
+      if (this.match.phase === "collectBalls" && this.timers) {
+        this.timers.collectBalls = startTimer(resetTimer(this.timers.collectBalls))
+      }
       const end = this.match.ends[this.match.activeEndIndex]
       await this.recordAction("end.complete", { end })
       await this.enqueue("sendEnd", { clientEventId: createId("event"), end })

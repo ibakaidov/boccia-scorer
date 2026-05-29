@@ -14,6 +14,7 @@ const api: BocciaApi = {
   },
   match: {
     saveSnapshot: (snapshot: MatchSnapshot) => ipcRenderer.invoke(IPC_CHANNELS.matchSaveSnapshot, snapshot),
+    loadSnapshot: () => ipcRenderer.invoke(IPC_CHANNELS.matchLoadSnapshot),
     complete: (match: Match) => ipcRenderer.invoke(IPC_CHANNELS.matchComplete, match),
     listHistory: () => ipcRenderer.invoke(IPC_CHANNELS.matchListHistory)
   },

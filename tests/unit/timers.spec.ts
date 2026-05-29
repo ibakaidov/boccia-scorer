@@ -10,6 +10,16 @@ describe("timers", () => {
     expect(remainingSec(ticked)).toBe(6)
   })
 
+  it("does not lose fractional seconds across repeated ticks", () => {
+    let timer = startTimer(createTimer("redEnd", 10), new Date("2026-05-23T12:00:00.000Z"))
+
+    timer = tickTimer(timer, new Date("2026-05-23T12:00:01.900Z"))
+    timer = tickTimer(timer, new Date("2026-05-23T12:00:03.800Z"))
+
+    expect(timer.elapsedSec).toBe(3)
+    expect(timer.startedAt).toBe("2026-05-23T12:00:03.000Z")
+  })
+
   it("runs only one side timer", () => {
     let timers = createMatchTimers(60, DEFAULT_TIMER_SETTINGS)
     timers = toggleExclusiveSideTimer(timers, "redEnd", new Date("2026-05-23T12:00:00.000Z"))

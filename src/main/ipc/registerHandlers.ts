@@ -36,6 +36,8 @@ export function registerHandlers(
     database.saveSnapshot(snapshot)
   })
 
+  ipcMain.handle(IPC_CHANNELS.matchLoadSnapshot, () => database.loadSnapshot())
+
   ipcMain.handle(IPC_CHANNELS.matchComplete, (event, match) => {
     ensureOperator(event, getOperatorWindow)
     database.saveCompletedMatch(match)

@@ -14,6 +14,7 @@ export type BocciaApi = {
   }
   match: {
     saveSnapshot: (snapshot: MatchSnapshot) => Promise<void>
+    loadSnapshot: () => Promise<MatchSnapshot | undefined>
     complete: (match: Match) => Promise<void>
     listHistory: () => Promise<Match[]>
   }
@@ -39,6 +40,7 @@ export const IPC_CHANNELS = {
   settingsSave: "settings:save",
   settingsReset: "settings:reset",
   matchSaveSnapshot: "match:saveSnapshot",
+  matchLoadSnapshot: "match:loadSnapshot",
   matchComplete: "match:complete",
   matchListHistory: "match:listHistory",
   actionLogAdd: "actionLog:add",

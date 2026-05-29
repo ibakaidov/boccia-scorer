@@ -18,11 +18,8 @@ onBeforeUnmount(() => {
 })
 
 async function startPause() {
-  if (!store.timers) return
   if (!canUseWarmup.value) return
-  store.timers.warmup.running = !store.timers.warmup.running
-  store.timers.warmup.startedAt = store.timers.warmup.running ? new Date().toISOString() : undefined
-  await store.refreshScoreboard()
+  await store.toggleWarmupTimer()
 }
 
 async function toEnds() {

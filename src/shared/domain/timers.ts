@@ -49,12 +49,13 @@ export function pauseTimer(timer: TimerState, now = new Date()): TimerState {
 export function tickTimer(timer: TimerState, now = new Date()): TimerState {
   if (!timer.running) return timer
   const elapsedSec = calculateElapsed(timer, now)
+  const finished = elapsedSec >= timer.maxSec
   return {
     ...timer,
     elapsedSec,
-    running: elapsedSec < timer.maxSec,
-    startedAt: elapsedSec < timer.maxSec ? now.toISOString() : undefined,
-    pausedAt: elapsedSec < timer.maxSec ? undefined : now.toISOString()
+    running: !finished,
+    startedAt: finished ? undefined : advanceStartedAt(timer, elapsedSec),
+    pausedAt: finished ? now.toISOString() : undefined
   }
 }
 
@@ -112,6 +113,12 @@ function calculateElapsed(timer: TimerState, now: Date): number {
   const startedAt = new Date(timer.startedAt).getTime()
   const deltaSec = Math.max(0, Math.floor((now.getTime() - startedAt) / 1000))
   return clampElapsed(timer, timer.elapsedSec + deltaSec)
+}
+
+function advanceStartedAt(timer: TimerState, elapsedSec: number): string | undefined {
+  if (!timer.startedAt) return undefined
+  const accountedSec = Math.max(0, elapsedSec - timer.elapsedSec)
+  return new Date(new Date(timer.startedAt).getTime() + accountedSec * 1000).toISOString()
 }
 
 function clampElapsed(timer: TimerState, elapsedSec: number): number {

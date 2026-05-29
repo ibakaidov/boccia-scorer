@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from "vue"
+import { useRouter } from "vue-router"
 import { formatMatchResult } from "@shared/domain"
 import { useScorerStore } from "../stores/scorerStore"
 import type { SideColor } from "@shared/domain"
 
 const store = useScorerStore()
+const router = useRouter()
 const firstSide = ref<"red" | "blue">("red")
 const error = ref("")
 const totals = computed(() => store.mainTotals())
@@ -18,6 +20,18 @@ async function finish() {
   if (!confirm("Завершить матч? В автономном режиме код не требуется.")) return
   try {
     await store.finishMatch()
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : String(err)
+  }
+}
+
+async function startTieBreak() {
+  error.value = ""
+  try {
+    await store.startTieBreak(firstSide.value)
+    if (store.match?.phase === "tieBreak") {
+      await router.push("/match")
+    }
   } catch (err) {
     error.value = err instanceof Error ? err.message : String(err)
   }
@@ -66,7 +80,7 @@ async function completeTieBreak(winner: SideColor) {
         <option value="red">Первый мяч: Красные</option>
         <option value="blue">Первый мяч: Синие</option>
       </select>
-      <button type="button" class="primary-action" @click="store.startTieBreak(firstSide)">Начать тай-брейк</button>
+      <button type="button" class="primary-action" @click="startTieBreak">Начать тай-брейк</button>
     </section>
 
     <section v-if="store.match.phase === 'tieBreak'" class="warning-panel">

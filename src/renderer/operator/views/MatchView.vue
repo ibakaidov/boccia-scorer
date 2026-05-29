@@ -10,10 +10,21 @@ const router = useRouter()
 let interval: number | undefined
 
 const activeEnd = computed(() => store.activeEnd)
+const activeScore = computed(() => {
+  if (store.match?.phase === "tieBreak") return store.match.tieBreaks.at(-1)
+  return activeEnd.value
+})
 const mainTotals = computed(() => store.mainTotals())
 const canEditEnd = computed(() => store.match?.phase === "end" && activeEnd.value?.status === "inProgress")
 const canCompleteEnd = computed(() => canEditEnd.value)
 const canRunSideTimers = computed(() => store.match?.phase === "end" || store.match?.phase === "tieBreak")
+const canPauseTimers = computed(() => {
+  if (!store.match || !store.timers) return false
+  if (store.match.status === "completed" || store.match.phase === "completed") return false
+  if (store.match.phase === "end" || store.match.phase === "tieBreak") return true
+  if (store.match.phase === "collectBalls") return store.timers.collectBalls.running
+  return false
+})
 
 onMounted(() => {
   interval = window.setInterval(() => void store.tick(), 1000)
@@ -77,7 +88,7 @@ async function nextEnd() {
       <div class="central-actions">
         <strong>{{ mainTotals.red }} : {{ mainTotals.blue }}</strong>
         <span>Общий счет</span>
-        <button type="button" @click="store.pauseTimers">Пауза всех таймеров</button>
+        <button type="button" :disabled="!canPauseTimers" @click="store.pauseTimers">Пауза всех таймеров</button>
         <button type="button" class="danger-action" :disabled="!canCompleteEnd" @click="completeEnd">Отправить энд</button>
         <button v-if="store.match.phase === 'collectBalls'" type="button" class="primary-action" @click="nextEnd">
           Следующий энд
@@ -96,7 +107,7 @@ async function nextEnd() {
       <ScoreControls
         color="red"
         label="Красные"
-        :score="activeEnd?.redScore ?? 0"
+        :score="activeScore?.redScore ?? 0"
         :total="mainTotals.red"
         :disabled="!canEditEnd"
         @change="store.changeScore('red', $event)"
@@ -104,7 +115,7 @@ async function nextEnd() {
       <ScoreControls
         color="blue"
         label="Синие"
-        :score="activeEnd?.blueScore ?? 0"
+        :score="activeScore?.blueScore ?? 0"
         :total="mainTotals.blue"
         :disabled="!canEditEnd"
         @change="store.changeScore('blue', $event)"

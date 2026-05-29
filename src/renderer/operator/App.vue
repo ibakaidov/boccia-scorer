@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from "vue"
 import { RouterLink, RouterView } from "vue-router"
 import { useScorerStore } from "./stores/scorerStore"
 
 const store = useScorerStore()
-
-onMounted(() => {
-  void store.bootstrap()
-})
 </script>
 
 <template>

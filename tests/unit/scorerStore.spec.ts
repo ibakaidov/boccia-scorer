@@ -1,6 +1,7 @@
 import { createPinia, setActivePinia } from "pinia"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useScorerStore } from "@renderer/operator/stores/scorerStore"
+import { DEFAULT_SETTINGS, createMatchTimers, createStandaloneMatch } from "@shared/domain"
 import type { BocciaApi } from "@shared/ipc/api"
 
 function cloneCheckedMock<T>() {
@@ -15,15 +16,16 @@ beforeEach(() => {
   window.bocciaApi = {
     app: {
       getVersion: vi.fn(),
-      getStatus: vi.fn()
+      getStatus: vi.fn(() => Promise.resolve({ appVersion: "0.1.0", serverOnline: false, pendingSync: 0, failedSync: 0 }))
     },
     settings: {
-      load: vi.fn(),
+      load: vi.fn(() => Promise.resolve(DEFAULT_SETTINGS)),
       save: vi.fn(),
       reset: vi.fn()
     },
     match: {
       saveSnapshot: cloneCheckedMock(),
+      loadSnapshot: vi.fn(() => Promise.resolve(undefined)),
       complete: cloneCheckedMock(),
       listHistory: vi.fn(() => Promise.resolve([]))
     },
@@ -33,7 +35,7 @@ beforeEach(() => {
     },
     sync: {
       enqueue: cloneCheckedMock(),
-      list: vi.fn(),
+      list: vi.fn(() => Promise.resolve([])),
       run: vi.fn()
     },
     scoreboard: {
@@ -117,4 +119,64 @@ describe("scorerStore", () => {
     expect(store.timers.redEnd).toMatchObject({ elapsedSec: 9, running: true })
     expect(store.actionLog).toHaveLength(actionLogLength)
   })
+
+  it("starts collect balls timer after completing a non-final end", async () => {
+    const store = useScorerStore()
+
+    await store.startStandaloneMatch("bc1f")
+    await store.startEnds()
+    await store.completeEnd()
+
+    expect(store.match?.phase).toBe("collectBalls")
+    expect(store.timers?.collectBalls.running).toBe(true)
+    expect(store.scoreboard.soloTimer?.running).toBe(true)
+  })
+
+  it("restores active snapshot during bootstrap", async () => {
+    const gameClass = DEFAULT_SETTINGS.gameClasses[0]!
+    const match = createStandaloneMatch(gameClass)
+    const timers = createMatchTimers(gameClass.endTimeSec, DEFAULT_SETTINGS.timers)
+    vi.mocked(window.bocciaApi.match.loadSnapshot).mockResolvedValue({
+      match,
+      timers,
+      scoreboard: storelessScoreboard(),
+      savedAt: "2026-05-29T00:00:00.000Z"
+    })
+    const store = useScorerStore()
+
+    await store.bootstrap()
+
+    expect(store.match?.clientId).toBe(match.clientId)
+    expect(store.timers?.redEnd.maxSec).toBe(gameClass.endTimeSec)
+    expect(window.bocciaApi.scoreboard.update).toHaveBeenCalled()
+  })
 })
+
+function storelessScoreboard() {
+  return {
+    mode: "idle" as const,
+    courtName: "Корт не выбран",
+    gameClassCode: "-",
+    currentEndLabel: "Ожидание",
+    red: {
+      color: "red" as const,
+      label: "Красные",
+      timer: { maxSec: 0, elapsedSec: 0, remainingSec: 0, running: false, label: "00:00" },
+      endScore: 0,
+      totalScore: 0,
+      participantsLabel: "Красные"
+    },
+    blue: {
+      color: "blue" as const,
+      label: "Синие",
+      timer: { maxSec: 0, elapsedSec: 0, remainingSec: 0, running: false, label: "00:00" },
+      endScore: 0,
+      totalScore: 0,
+      participantsLabel: "Синие"
+    },
+    statusLabel: "Автономно",
+    syncLabel: "Автономно",
+    completedEnds: [],
+    tieBreaks: []
+  }
+}

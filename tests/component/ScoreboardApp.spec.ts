@@ -46,12 +46,27 @@ beforeEach(() => {
 })
 
 describe("ScoreboardApp", () => {
-  it("shows match totals on the main board", async () => {
+  it("shows active end score on the main board during play", async () => {
     const { container } = render(ScoreboardApp)
 
     await waitFor(() => {
       const scores = Array.from(container.querySelectorAll(".board-score")).map((item) => item.textContent?.trim())
-      expect(scores).toEqual(["4", "0"])
+      expect(scores).toEqual(["1", "2"])
+      expect(container.textContent).toContain("Итого: 4")
+      expect(container.textContent).toContain("Итого: 0")
+    })
+  })
+
+  it("shows match totals on the main board in protocol", async () => {
+    currentScoreboardState = {
+      ...currentScoreboardState,
+      mode: "protocol"
+    }
+    const { container } = render(ScoreboardApp)
+
+    await waitFor(() => {
+      const scores = Array.from(container.querySelectorAll(".board-score")).map((item) => item.textContent?.trim())
+      expect(scores).toEqual(["4*", "0"])
     })
   })
 

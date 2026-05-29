@@ -46,6 +46,24 @@ describe("buildScoreboardState", () => {
     expect(state.blue.endScore).toBe(0)
   })
 
+  it("exposes in-progress end score separately from completed totals", () => {
+    const match: Match = {
+      ...baseMatch(),
+      phase: "end",
+      ends: [
+        { index: 1, redScore: 2, blueScore: 1, redTimeUsedSec: 0, blueTimeUsedSec: 0, status: "inProgress" },
+        ...baseMatch().ends.slice(1)
+      ]
+    }
+
+    const state = buildScoreboardState(match, timers, DEFAULT_SETTINGS, "Автономно")
+
+    expect(state.red.endScore).toBe(2)
+    expect(state.blue.endScore).toBe(1)
+    expect(state.red.totalScore).toBe(0)
+    expect(state.blue.totalScore).toBe(0)
+  })
+
   it("uses the active tie-break as active score instead of the last main end", () => {
     const tieBreak: TieBreakEnd = {
       index: 1,
