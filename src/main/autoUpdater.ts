@@ -1,5 +1,8 @@
+import { createRequire } from "node:module"
 import { app } from "electron"
-import { autoUpdater, NsisUpdater } from "electron-updater"
+
+const require = createRequire(import.meta.url)
+const { autoUpdater, NsisUpdater } = require("electron-updater") as typeof import("electron-updater")
 
 export function configureAutoUpdates(): void {
   if (!app.isPackaged) return
