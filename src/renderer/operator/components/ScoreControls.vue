@@ -25,8 +25,8 @@ function emitChange(delta: number) {
     <strong>{{ score }}</strong>
     <small>Итого: {{ total }}</small>
     <div class="button-row">
-      <button type="button" :disabled="disabled" @click="emitChange(-1)">-</button>
-      <button type="button" :disabled="disabled" @click="emitChange(1)">+</button>
+      <button class="score-button" type="button" :disabled="disabled" aria-label="Уменьшить счет" @click="emitChange(-1)">-</button>
+      <button class="score-button" type="button" :disabled="disabled" aria-label="Увеличить счет" @click="emitChange(1)">+</button>
     </div>
   </section>
 </template>

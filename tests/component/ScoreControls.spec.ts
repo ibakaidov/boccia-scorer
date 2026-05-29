@@ -14,10 +14,10 @@ describe("ScoreControls", () => {
       }
     })
 
-    await fireEvent.click(screen.getByRole("button", { name: "+" }))
+    await fireEvent.click(screen.getByRole("button", { name: "Увеличить счет" }))
 
-    expect(screen.getByRole("button", { name: "-" })).toBeDisabled()
-    expect(screen.getByRole("button", { name: "+" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Уменьшить счет" })).toBeDisabled()
+    expect(screen.getByRole("button", { name: "Увеличить счет" })).toBeDisabled()
     expect(rendered.emitted("change")).toBeUndefined()
   })
 })
