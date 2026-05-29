@@ -10,6 +10,7 @@ describe("operator color contrast", () => {
   it("keeps primary action buttons readable", () => {
     expect(contrastRatio("#ffffff", "#2563eb")).toBeGreaterThanOrEqual(4.5)
     expect(contrastRatio("#ffffff", "#dc2626")).toBeGreaterThanOrEqual(4.5)
+    expect(contrastRatio("#ffffff", "#25344e")).toBeGreaterThanOrEqual(4.5)
   })
 })
 

@@ -113,7 +113,11 @@ async function continueTieBreak() {
           <span class="phase-label">Сбор мячей</span>
           <strong class="collect-timer">{{ collectBallsLabel }}</strong>
           <span>До начала следующего энда</span>
-          <button type="button" @click="store.toggleCollectBallsTimer">
+          <button
+            type="button"
+            :class="store.timers.collectBalls.running ? 'secondary-action' : 'primary-action'"
+            @click="store.toggleCollectBallsTimer"
+          >
             {{ store.timers.collectBalls.running ? "Остановить часы" : "Продолжить сбор" }}
           </button>
           <button type="button" class="primary-action" @click="nextEnd">Начать следующий энд</button>
