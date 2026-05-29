@@ -21,9 +21,25 @@ body {
   grid-template-rows: auto 1fr auto;
   gap: 1.8vh;
   padding: 2vh;
+  background: #050b14;
+}
+
+.scoreboard-shell.theme-dark {
   background:
     radial-gradient(circle at 15% 20%, rgba(220, 38, 38, 0.28), transparent 35%),
     radial-gradient(circle at 85% 80%, rgba(37, 99, 235, 0.28), transparent 35%), #050b14;
+}
+
+.scoreboard-shell.theme-split {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(127, 29, 29, 0.92) 0%,
+      rgba(127, 29, 29, 0.92) 50%,
+      rgba(30, 58, 138, 0.92) 50%,
+      rgba(30, 58, 138, 0.92) 100%
+    ),
+    #050b14;
 }
 
 .scoreboard-top,
@@ -96,6 +112,13 @@ body {
   text-align: center;
   padding: clamp(12px, 1.4vw, 28px);
   min-width: 0;
+}
+
+.theme-split .board-side,
+.theme-split .board-center,
+.theme-split .solo-board {
+  background: rgba(5, 11, 20, 0.82);
+  border-color: rgba(255, 255, 255, 0.34);
 }
 
 .board-side.red {

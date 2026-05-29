@@ -41,6 +41,11 @@ export const settingsSchema = z.object({
     confirm: z.string().min(1),
     cancel: z.string().min(1)
   }),
+  scoreboard: z
+    .object({
+      theme: z.enum(["dark", "split"])
+    })
+    .default({ theme: "dark" }),
   gameClasses: z.array(gameClassSchema).min(1),
   courts: z.array(courtSchema)
 })

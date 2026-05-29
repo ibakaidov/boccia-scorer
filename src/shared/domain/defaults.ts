@@ -1,10 +1,14 @@
-import type { AppSettings, Court, GameClass, TimerSettings } from "./types"
+import type { AppSettings, Court, GameClass, ScoreboardSettings, TimerSettings } from "./types"
 
 export const DEFAULT_TIMER_SETTINGS: TimerSettings = {
   warmupSec: 120,
   collectBallsSec: 60,
   penaltyBallSec: 60,
   technicalTimeoutSec: 600
+}
+
+export const DEFAULT_SCOREBOARD_SETTINGS: ScoreboardSettings = {
+  theme: "dark"
 }
 
 export const DEFAULT_GAME_CLASSES: GameClass[] = [
@@ -179,6 +183,7 @@ export const DEFAULT_SETTINGS: AppSettings = {
     confirm: "Enter",
     cancel: "Escape"
   },
+  scoreboard: DEFAULT_SCOREBOARD_SETTINGS,
   gameClasses: DEFAULT_GAME_CLASSES,
   courts: DEFAULT_COURTS
 }

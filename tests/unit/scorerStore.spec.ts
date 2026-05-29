@@ -172,6 +172,7 @@ describe("scorerStore", () => {
 function storelessScoreboard() {
   return {
     mode: "idle" as const,
+    theme: "dark" as const,
     courtName: "Корт не выбран",
     gameClassCode: "-",
     currentEndLabel: "Ожидание",

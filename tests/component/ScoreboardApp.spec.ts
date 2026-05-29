@@ -6,6 +6,7 @@ import type { ScoreboardState } from "@shared/domain"
 
 const scoreboardState: ScoreboardState = {
   mode: "end",
+  theme: "dark",
   courtName: "Корт 1",
   gameClassCode: "BC1F",
   currentEndLabel: "Энд 1 из 4",
@@ -61,6 +62,18 @@ describe("ScoreboardApp", () => {
       expect(container.textContent).toContain("Итого: 4")
       expect(container.textContent).toContain("Итого: 0")
       expect(container.querySelectorAll(".scoreboard-end-dot")).toHaveLength(8)
+    })
+  })
+
+  it("applies the selected scoreboard theme", async () => {
+    currentScoreboardState = {
+      ...currentScoreboardState,
+      theme: "split"
+    }
+    const { container } = render(ScoreboardApp)
+
+    await waitFor(() => {
+      expect(container.querySelector(".scoreboard-shell")?.classList.contains("theme-split")).toBe(true)
     })
   })
 

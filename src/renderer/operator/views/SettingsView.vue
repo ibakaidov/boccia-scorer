@@ -42,6 +42,17 @@ async function reset() {
         <label>Штрафной мяч, сек <input v-model.number="draft.timers.penaltyBallSec" type="number" min="1" /></label>
         <label>Техтайм-аут, сек <input v-model.number="draft.timers.technicalTimeoutSec" type="number" min="1" /></label>
       </section>
+
+      <section class="settings-panel">
+        <h2>Большое табло</h2>
+        <label>
+          Цветовой фон
+          <select v-model="draft.scoreboard.theme">
+            <option value="dark">Темный фон, как сейчас</option>
+            <option value="split">Половина красная, половина синяя</option>
+          </select>
+        </label>
+      </section>
     </div>
 
     <section class="settings-panel">

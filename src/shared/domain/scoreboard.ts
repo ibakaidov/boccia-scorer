@@ -9,16 +9,18 @@ import type {
   ScoreboardMode,
   ScoreboardSide,
   ScoreboardState,
+  ScoreboardTheme,
   TimerState,
   TimerType,
   TimerView
 } from "./types"
 
-export function createIdleScoreboard(settings = "Готов к автономному матчу"): ScoreboardState {
+export function createIdleScoreboard(settings = "Готов к автономному матчу", theme: ScoreboardTheme = "dark"): ScoreboardState {
   const emptyTimer = createTimerView({ type: "warmup", maxSec: 0, elapsedSec: 0, running: false })
 
   return {
     mode: "idle",
+    theme,
     courtName: "Корт не выбран",
     gameClassCode: "-",
     currentEndLabel: "Ожидание",
@@ -52,7 +54,7 @@ export function buildScoreboardState(
   settings: AppSettings,
   syncLabel: string
 ): ScoreboardState {
-  if (!match || !timers) return createIdleScoreboard()
+  if (!match || !timers) return createIdleScoreboard(undefined, settings.scoreboard.theme)
 
   const gameClass = settings.gameClasses.find((item) => item.id === match.gameClassId)
   const court = settings.courts.find((item) => item.id === match.courtId)
@@ -64,6 +66,7 @@ export function buildScoreboardState(
 
   return {
     mode,
+    theme: settings.scoreboard.theme,
     courtName: courtName(court),
     gameClassCode: gameClass?.code ?? "-",
     currentEndLabel: currentEndLabel(match, gameClass),

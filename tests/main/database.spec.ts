@@ -76,4 +76,15 @@ describe("LocalDatabase", () => {
     expect(settings.courts).toHaveLength(8)
     expect(settings.courts.at(-1)).toMatchObject({ id: "court-8", name: "Корт 8" })
   })
+
+  it("adds default scoreboard settings to old saved settings", () => {
+    const oldSettings = { ...DEFAULT_SETTINGS } as Record<string, unknown>
+    delete oldSettings.scoreboard
+    storedSettingsPayload = JSON.stringify(oldSettings)
+
+    const database = new LocalDatabase("/tmp/boccia-test.sqlite")
+    const settings = database.loadSettings()
+
+    expect(settings.scoreboard).toEqual({ theme: "dark" })
+  })
 })

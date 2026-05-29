@@ -151,6 +151,7 @@ export type TimerView = {
 }
 
 export type ScoreboardMode = "idle" | "warmup" | "end" | "collectBalls" | "tieBreak" | "protocol"
+export type ScoreboardTheme = "dark" | "split"
 
 export type ScoreboardSide = {
   color: SideColor
@@ -168,6 +169,7 @@ export type ScoreboardEndProgressItem = {
 
 export type ScoreboardState = {
   mode: ScoreboardMode
+  theme: ScoreboardTheme
   courtName: string
   gameClassCode: string
   currentEndLabel: string
@@ -230,12 +232,17 @@ export type HotkeySettings = {
   cancel: string
 }
 
+export type ScoreboardSettings = {
+  theme: ScoreboardTheme
+}
+
 export type AppSettings = {
   schemaVersion: number
   language: "ru"
   server: ServerSettings
   timers: TimerSettings
   hotkeys: HotkeySettings
+  scoreboard: ScoreboardSettings
   gameClasses: GameClass[]
   courts: Court[]
 }

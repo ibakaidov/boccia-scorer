@@ -30,6 +30,19 @@ describe("buildScoreboardState", () => {
     expect(state.currentEndLabel).toBe("Разминка")
   })
 
+  it("passes the selected theme to the scoreboard state", () => {
+    const match = baseMatch()
+
+    const state = buildScoreboardState(
+      match,
+      timers,
+      { ...DEFAULT_SETTINGS, scoreboard: { theme: "split" } },
+      "Автономно"
+    )
+
+    expect(state.theme).toBe("split")
+  })
+
   it("does not expose the last main end as active score in protocol", () => {
     const match: Match = {
       ...baseMatch(),

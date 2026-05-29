@@ -55,7 +55,7 @@ function tieBreakLabel(tieBreak: TieBreakEnd): string {
 </script>
 
 <template>
-  <main :class="['scoreboard-shell', state.mode]">
+  <main :class="['scoreboard-shell', state.mode, `theme-${state.theme}`]">
     <header class="scoreboard-top">
       <span>{{ state.courtName }}</span>
       <strong>{{ state.gameClassCode }}</strong>
