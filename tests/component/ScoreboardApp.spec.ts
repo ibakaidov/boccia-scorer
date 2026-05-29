@@ -84,6 +84,15 @@ describe("ScoreboardApp", () => {
           blueScore: 0,
           redTimeUsedSec: 0,
           blueTimeUsedSec: 0,
+          status: "completed"
+        },
+        {
+          index: 2,
+          firstSide: "blue",
+          redScore: 0,
+          blueScore: 0,
+          redTimeUsedSec: 0,
+          blueTimeUsedSec: 0,
           winner: "red",
           status: "completed"
         }
@@ -94,7 +103,8 @@ describe("ScoreboardApp", () => {
     await waitFor(() => {
       const scores = Array.from(container.querySelectorAll(".board-score")).map((item) => item.textContent?.trim())
       expect(scores).toEqual(["2*", "2"])
-      expect(container.querySelector(".scoreboard-footer")?.textContent).toContain("ТБ1 Красные*")
+      expect(container.querySelector(".scoreboard-footer")?.textContent).toContain("ТБ1 равноудалено")
+      expect(container.querySelector(".scoreboard-footer")?.textContent).toContain("ТБ2 Красные*")
     })
   })
 })

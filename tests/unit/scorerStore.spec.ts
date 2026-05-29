@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from "pinia"
 import { beforeEach, describe, expect, it, vi } from "vitest"
 import { useScorerStore } from "@renderer/operator/stores/scorerStore"
-import { DEFAULT_SETTINGS, createMatchTimers, createStandaloneMatch } from "@shared/domain"
+import { DEFAULT_SETTINGS, createMatchTimers, createStandaloneMatch, createTieBreak } from "@shared/domain"
 import type { BocciaApi } from "@shared/ipc/api"
 
 function cloneCheckedMock<T>() {
@@ -149,6 +149,23 @@ describe("scorerStore", () => {
     expect(store.match?.clientId).toBe(match.clientId)
     expect(store.timers?.redEnd.maxSec).toBe(gameClass.endTimeSec)
     expect(window.bocciaApi.scoreboard.update).toHaveBeenCalled()
+  })
+
+  it("continues tie-break when the position is equidistant", async () => {
+    const store = useScorerStore()
+
+    await store.startStandaloneMatch("bc1f")
+    store.match = createTieBreak({ ...store.match!, phase: "protocol" }, "red")
+
+    await store.continueTieBreak("blue")
+
+    expect(store.match?.phase).toBe("tieBreak")
+    expect(store.match?.tieBreaks).toHaveLength(2)
+    expect(store.match?.tieBreaks[0]).toMatchObject({ status: "completed" })
+    expect(store.match?.tieBreaks[0]?.winner).toBeUndefined()
+    expect(store.match?.tieBreaks[1]).toMatchObject({ index: 2, firstSide: "blue", status: "inProgress" })
+    expect(store.timers?.redEnd.elapsedSec).toBe(0)
+    expect(store.timers?.blueEnd.elapsedSec).toBe(0)
   })
 })
 
