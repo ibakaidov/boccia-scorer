@@ -53,14 +53,13 @@ beforeEach(() => {
 })
 
 describe("ScoreboardApp", () => {
-  it("shows active end score on the main board during play", async () => {
+  it("shows match totals on the main board during play", async () => {
     const { container } = render(ScoreboardApp)
 
     await waitFor(() => {
       const scores = Array.from(container.querySelectorAll(".board-score")).map((item) => item.textContent?.trim())
-      expect(scores).toEqual(["1", "2"])
-      expect(container.textContent).toContain("Итого: 4")
-      expect(container.textContent).toContain("Итого: 0")
+      expect(scores).toEqual(["4", "0"])
+      expect(container.textContent).not.toContain("Итого:")
       expect(container.querySelectorAll(".scoreboard-end-dot")).toHaveLength(8)
     })
   })
