@@ -4,22 +4,26 @@ import { useScorerStore } from "../stores/scorerStore"
 import type { AppSettings } from "@shared/domain"
 
 const store = useScorerStore()
-const draft = reactive<AppSettings>(structuredClone(store.settings))
+const draft = reactive<AppSettings>(cloneSettings(store.settings))
 
 watch(
   () => store.settings,
-  (settings) => Object.assign(draft, structuredClone(settings)),
+  (settings) => Object.assign(draft, cloneSettings(settings)),
   { deep: true }
 )
 
 async function save() {
-  await store.saveSettings(structuredClone(draft))
+  await store.saveSettings(cloneSettings(draft))
 }
 
 async function reset() {
   if (confirm("Сбросить настройки к дефолтам? Матчи, очередь и логи не удаляются.")) {
     await store.resetSettings()
   }
+}
+
+function cloneSettings(settings: AppSettings): AppSettings {
+  return JSON.parse(JSON.stringify(settings)) as AppSettings
 }
 </script>
 

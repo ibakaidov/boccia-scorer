@@ -1,6 +1,6 @@
 {
   "name": "boccia-scorer-v2",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Offline-first boccia scoring desktop application",
   "main": "./out/main/index.js",
   "type": "module",
