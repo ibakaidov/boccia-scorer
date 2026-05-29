@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process"
 import http from "node:http"
+import process from "node:process"
 import { chromium } from "playwright"
 
 const port = Number(process.env.BOCCIA_CDP_PORT ?? 9222)

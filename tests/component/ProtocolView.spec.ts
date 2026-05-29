@@ -79,8 +79,8 @@ describe("ProtocolView", () => {
     expect(screen.queryByText("Нужен тай-брейк")).not.toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "Начать тай-брейк" })).not.toBeInTheDocument()
     expect(screen.getByText("Основной счет равен: 0 : 0. Укажите победителя тай-брейка.")).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Победили красные" })).toBeEnabled()
-    expect(screen.getByRole("button", { name: "Победили синие" })).toBeEnabled()
+    expect(screen.getByRole("button", { name: "Победили: Красные" })).toBeEnabled()
+    expect(screen.getByRole("button", { name: "Победили: Синие" })).toBeEnabled()
     expect(screen.queryByRole("button", { name: "Завершить матч без кода" })).not.toBeInTheDocument()
   })
 
