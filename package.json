@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check:contrast": "env -u NODE_OPTIONS NO_PROXY=127.0.0.1,localhost no_proxy=127.0.0.1,localhost node scripts/check-contrast.mjs",
+    "check:overflow": "env -u NODE_OPTIONS NO_PROXY=127.0.0.1,localhost no_proxy=127.0.0.1,localhost node scripts/check-overflow.mjs",
     "test:e2e": "playwright test",
     "test:e2e:smoke": "playwright test tests/e2e/smoke.spec.ts",
     "build": "npm run typecheck && electron-vite build",

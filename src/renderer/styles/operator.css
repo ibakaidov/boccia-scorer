@@ -229,7 +229,9 @@ a.danger-action {
 
 .metric-card strong {
   display: block;
-  font-size: 44px;
+  font-size: clamp(28px, 2vw, 44px);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .panel-form,
